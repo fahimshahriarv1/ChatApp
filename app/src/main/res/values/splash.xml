@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="App.Starting.Theme" parent="Theme.AppCompat">
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/lets_chat</item>
+        <item name="postSplashScreenTheme">@style/Theme.ChatAppStarting</item>
+    </style>
+</resources>
