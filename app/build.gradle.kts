@@ -4,6 +4,7 @@ import java.util.Locale
 
 plugins {
     id("com.android.application")
+    id("dagger.hilt.android.plugin")
     kotlin("kapt")
     kotlin("android")
 }
@@ -97,4 +98,11 @@ dependencies {
 
     //Splash Api
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    //Datastore
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
+    //Dagger Hilt
+    implementation ("com.google.dagger:hilt-android:2.48")
+    kapt ("com.google.dagger:hilt-compiler:2.46.1")
 }
