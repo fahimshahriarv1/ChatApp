@@ -4,13 +4,17 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 abstract class BaseActivity : AppCompatActivity() {
 
     protected fun showToolbar() = supportActionBar?.hide()
@@ -60,5 +64,11 @@ abstract class BaseActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, window.decorView).show(
             WindowInsetsCompat.Type.systemBars()
         )
+
+    }
+
+    protected fun setStatusBarColor(colorResource: Int) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(this, colorResource)
     }
 }
