@@ -5,7 +5,7 @@ import com.example.chatappstarting.data.manager.LocalUserMangerImpl
 import com.example.chatappstarting.domain.usecases.data.LocalUserLogin
 import com.example.chatappstarting.domain.manager.LocalUserManger
 import com.example.chatappstarting.domain.usecases.GetTokenUseCase
-import com.example.chatappstarting.domain.usecases.GetUSerLoggedInStateUseCase
+import com.example.chatappstarting.domain.usecases.GetUserLoggedInStateUseCase
 import com.example.chatappstarting.domain.usecases.SaveTokenUseCase
 import dagger.Module
 import dagger.Provides
@@ -26,6 +26,14 @@ object AppModule {
     fun provideLocalUserLogin(localUserManger: LocalUserManger): LocalUserLogin = LocalUserLogin(
         saveToken = SaveTokenUseCase(localUserManger),
         getToken = GetTokenUseCase(localUserManger),
-        getUSerLoggedInState = GetUSerLoggedInStateUseCase(localUserManger)
+        getUSerLoggedInState = GetUserLoggedInStateUseCase(localUserManger)
     )
+
+    @Provides
+    fun provideGetUserLoginState(localUserManger: LocalUserManger): GetUserLoggedInStateUseCase =
+        GetUserLoggedInStateUseCase(localUserManger)
+
+    @Provides
+    fun provideSaveTokenUseCase(localUserManger: LocalUserManger): SaveTokenUseCase =
+        SaveTokenUseCase(localUserManger)
 }

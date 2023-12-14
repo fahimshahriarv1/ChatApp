@@ -13,15 +13,21 @@ import com.example.chatappstarting.constants.REFRESH_TOKEN
 import com.example.chatappstarting.constants.TOKEN
 import com.example.chatappstarting.domain.manager.LocalUserManger
 import com.example.chatappstarting.utils.emptyIfNull
-import com.example.chatappstarting.utils.falseIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalUserMangerImpl(private val context: Context) : LocalUserManger {
-    override suspend fun saveUserToken(token : String) {
+    override suspend fun saveUserToken(token: String) {
         context.dataStore.edit { localUserInfo ->
             localUserInfo[PreferencesKeys.isLoggedIn] = true
             localUserInfo[PreferencesKeys.token] = token
+        }
+    }
+
+    override suspend fun removeLoggedInState() {
+        context.dataStore.edit { localUserInfo ->
+            localUserInfo[PreferencesKeys.isLoggedIn] = false
+            localUserInfo[PreferencesKeys.token] = ""
         }
     }
 
@@ -33,7 +39,7 @@ class LocalUserMangerImpl(private val context: Context) : LocalUserManger {
 
     override fun getUserLoggedInState(): Flow<Boolean> {
         return context.dataStore.data.map {
-            it[PreferencesKeys.isLoggedIn].falseIfNull()
+            it[PreferencesKeys.token]?.isNotEmpty() == true
         }
     }
 }
