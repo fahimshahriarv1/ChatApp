@@ -1,4 +1,4 @@
-package com.example.chatappstarting.ui.login.ui
+package com.example.chatappstarting.presentation.ui.login.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,12 +32,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,13 +57,14 @@ fun LoginScreen(
     isError: MutableState<Boolean> = mutableStateOf(false),
     unameChanged: (String) -> Unit = {},
     passChanged: (String) -> Unit = {},
-    onLoginClicked: () -> Unit = {}
+    onLoginClicked: () -> Unit = {},
+    onSignUoClicked: () -> Unit = {}
 ) {
     val isPassVisible = remember {
         mutableStateOf(false)
     }
 
-    val icon = if (isPassVisible.value) painterResource(id = R.drawable.eye_invisble)
+    val icon = if (isPassVisible.value) painterResource(id = R.drawable.eye_invisible)
     else painterResource(id = R.drawable.eye_visible)
 
     Surface {
@@ -97,6 +105,7 @@ fun LoginScreen(
                     focusedBorderColor = colorResource(id = R.color.app_main),
                     errorBorderColor = colorResource(id = R.color.error)
                 ),
+                singleLine = true,
                 isError = isError.value,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,47 +114,53 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = pass.value,
-                onValueChange = {
-                    passChanged(it)
-                },
-                shape = RoundedCornerShape(8.dp),
-                trailingIcon = {
-                    IconButton(onClick = { isPassVisible.value = !isPassVisible.value }) {
-                        Icon(
-                            painter = icon,
-                            contentDescription = "pass toggle icon",
-                            tint = colorResource(id = R.color.app_main),
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable(
-                                    interactionSource = MutableInteractionSource(),
-                                    indication = null
-                                ) { isPassVisible.value = !isPassVisible.value }
+            DisableSelection {
+                OutlinedTextField(
+                    value = pass.value,
+                    onValueChange = {
+                        passChanged(it)
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    trailingIcon = {
+                        if (pass.value.isNotEmpty()) {
+                            IconButton(onClick = { isPassVisible.value = !isPassVisible.value }) {
+                                Icon(
+                                    painter = icon,
+                                    contentDescription = "pass toggle icon",
+                                    tint = colorResource(id = R.color.app_main),
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable(
+                                            interactionSource = MutableInteractionSource(),
+                                            indication = null
+                                        ) { isPassVisible.value = !isPassVisible.value }
+                                )
+                            }
+                        } else
+                            isPassVisible.value = false
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.password),
+                            color = colorResource(id = R.color.gray_light)
                         )
-                    }
-                },
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.password),
-                        color = colorResource(id = R.color.gray_light)
-                    )
-                },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = colorResource(id = R.color.app_main),
-                    errorBorderColor = colorResource(id = R.color.error)
-                ),
-                isError = isError.value,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                ),
-                visualTransformation = if (isPassVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp)
-            )
+                    },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(id = R.color.app_main),
+                        errorBorderColor = colorResource(id = R.color.error)
+                    ),
+                    isError = isError.value,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
+                    ),
+                    singleLine = true,
+                    visualTransformation = if (isPassVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -166,6 +181,45 @@ fun LoginScreen(
                         .padding(vertical = 8.dp)
                 )
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val signUp = buildAnnotatedString {
+                append(
+                    AnnotatedString(
+                        text = stringResource(id = R.string.dont_hav_an_acocunt),
+                        spanStyle = SpanStyle(
+                            fontSize = 16.sp,
+                            color = colorResource(id = R.color.gray_light)
+                        )
+                    )
+                )
+
+                append(" ")
+
+                withStyle(
+                    style = SpanStyle(
+                        color = colorResource(id = R.color.app_main),
+                        fontWeight = FontWeight.SemiBold,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 16.sp
+                    )
+                ) {
+                    pushStringAnnotation(
+                        tag = stringResource(id = R.string.sign_up),
+                        annotation = stringResource(id = R.string.sign_up)
+                    )
+                    append(stringResource(id = R.string.sign_up))
+                }
+            }
+
+            ClickableText(text = signUp, onClick = {
+                signUp.getStringAnnotations(it, it)
+                    .firstOrNull()?.let { span ->
+                        if (span.tag == "Sign up")
+                            onSignUoClicked()
+                    }
+            })
         }
     }
 }
