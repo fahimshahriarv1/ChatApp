@@ -15,7 +15,7 @@
         tools:targetApi="31">
         <activity
             android:theme="@style/App.Starting.Theme"
-            android:name=".ui.splashScreen.SplashActivity"
+            android:name=".presentation.ui.splashScreen.SplashActivity"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
@@ -30,13 +30,13 @@
             android:theme="@style/App.Starting.Theme">
         </activity>
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".presentation.ui.login.LoginActivity"
             android:theme="@style/Theme.ChatAppStarting"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTop">
         </activity>
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name=".presentation.ui.home.HomeActivity"
             android:theme="@style/Theme.ChatAppStarting"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTop">

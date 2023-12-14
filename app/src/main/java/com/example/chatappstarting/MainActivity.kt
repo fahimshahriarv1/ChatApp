@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.chatappstarting.ui.login.ui.LoginScreen
-import com.example.chatappstarting.ui.theme.ChatAppStartingTheme
+import com.example.chatappstarting.presentation.ui.login.ui.LoginScreen
+import com.example.chatappstarting.presentation.ui.theme.ChatAppStartingTheme
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

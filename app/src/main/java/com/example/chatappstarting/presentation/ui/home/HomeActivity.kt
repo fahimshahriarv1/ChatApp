@@ -1,9 +1,9 @@
-package com.example.chatappstarting.ui.home
+package com.example.chatappstarting.presentation.ui.home
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import com.example.chatappstarting.ui.base.BaseActivity
-import com.example.chatappstarting.ui.home.views.HomeScreen
+import com.example.chatappstarting.presentation.ui.base.BaseActivity
+import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
 
 class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

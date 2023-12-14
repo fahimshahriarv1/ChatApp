@@ -1,11 +1,11 @@
-package com.example.chatappstarting.ui.login
+package com.example.chatappstarting.presentation.ui.login
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateOf
-import com.example.chatappstarting.ui.base.BaseActivity
-import com.example.chatappstarting.ui.home.HomeActivity
-import com.example.chatappstarting.ui.login.ui.LoginScreen
+import com.example.chatappstarting.presentation.ui.base.BaseActivity
+import com.example.chatappstarting.presentation.ui.home.HomeActivity
+import com.example.chatappstarting.presentation.ui.login.ui.LoginScreen
 
 class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

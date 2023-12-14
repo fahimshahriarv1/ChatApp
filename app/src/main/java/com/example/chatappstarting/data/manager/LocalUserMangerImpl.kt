@@ -12,7 +12,7 @@ import com.example.chatappstarting.constants.LOCAL_USER_MANaGER
 import com.example.chatappstarting.constants.REFRESH_TOKEN
 import com.example.chatappstarting.constants.TOKEN
 import com.example.chatappstarting.domain.manager.LocalUserManger
-import com.example.chatappstarting.utils.emptyIfNull
+import com.example.chatappstarting.presentation.utils.emptyIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

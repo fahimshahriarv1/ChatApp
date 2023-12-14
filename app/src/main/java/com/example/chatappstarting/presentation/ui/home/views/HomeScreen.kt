@@ -1,4 +1,4 @@
-package com.example.chatappstarting.ui.home.views
+package com.example.chatappstarting.presentation.ui.home.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

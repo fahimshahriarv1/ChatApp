@@ -1,4 +1,4 @@
-package com.example.chatappstarting.ui.base
+package com.example.chatappstarting.presentation.ui.base
 
 import android.app.Activity
 import android.content.Intent
