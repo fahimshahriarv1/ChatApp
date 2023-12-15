@@ -1,12 +1,12 @@
 package com.example.chatappstarting.presentation.ui.login
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import com.example.chatappstarting.presentation.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor() : BaseViewModel() {
     val uname = mutableStateOf("")
     val pass = mutableStateOf("")
     val isError = mutableStateOf(false)
