@@ -10,4 +10,5 @@
     <color name="app_main">#00A661</color>
     <color name="gray_light">#ADADAD</color>
     <color name="error">#FA0808</color>
+    <color name="transparent">#00000000</color>
 </resources>
