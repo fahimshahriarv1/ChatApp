@@ -14,11 +14,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.DisableSelection
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,7 +73,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
+                .fillMaxHeight()
         ) {
             Text(
                 text = stringResource(id = R.string.login),
@@ -103,7 +103,8 @@ fun LoginScreen(
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = colorResource(id = R.color.app_main),
-                    errorBorderColor = colorResource(id = R.color.error)
+                    errorBorderColor = colorResource(id = R.color.error),
+                    unfocusedBorderColor = colorResource(id = R.color.gray_light)
                 ),
                 singleLine = true,
                 isError = isError.value,
@@ -147,7 +148,8 @@ fun LoginScreen(
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = colorResource(id = R.color.app_main),
-                        errorBorderColor = colorResource(id = R.color.error)
+                        errorBorderColor = colorResource(id = R.color.error),
+                        unfocusedBorderColor = colorResource(id = R.color.gray_light)
                     ),
                     isError = isError.value,
                     keyboardOptions = KeyboardOptions(
@@ -164,7 +166,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            OutlinedButton(
+            Button(
                 onClick = onLoginClicked,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

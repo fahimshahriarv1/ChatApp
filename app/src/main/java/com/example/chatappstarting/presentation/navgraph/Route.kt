@@ -4,6 +4,11 @@ sealed class Route(
     val route: String
 ) {
     object AppAuth : Route(route = "appAuth")
-    object LoginScreen : Route(route = "loginScreen")
+    object AppSignUp : Route(route = "appSignUp")
+    object AppMain : Route(route = "appMain")
     object HomeScreen : Route(route = "homeScreen")
+    object LoginScreen : Route(route = "loginScreen")
+    object SignUpMobileScreen : Route(route = "signUpMobileScreen")
+    object SignUpOtpScreen : Route(route = "signUpOtpScreen")
+    object SignUpPasswordScreen : Route(route = "signUpPasswordScreen")
 }
