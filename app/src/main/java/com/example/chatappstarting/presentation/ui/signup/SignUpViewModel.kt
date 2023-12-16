@@ -34,10 +34,6 @@ class SignUpViewModel @Inject constructor(
     private val _isPasswordMatched = mutableStateOf(true)
     val isPasswordMatched: State<Boolean> = _isPasswordMatched
 
-    fun onSendOtpClicked() {
-        navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
-    }
-
     fun onCountryCodeSelected(code: String) {
         _countryCode.value = code
     }
@@ -59,6 +55,10 @@ class SignUpViewModel @Inject constructor(
     fun onReEnterPasswordChanged(pass: String) {
         _reEnterPassword.value = pass
         _isPasswordMatched.value = _reEnterPassword.value == _password.value
+    }
+
+    fun onSendOtpClicked() {
+        navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
     }
 
     fun onPasswordOkClicked() {
