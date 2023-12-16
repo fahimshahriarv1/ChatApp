@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -35,13 +36,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappstarting.R
 import com.example.chatappstarting.constants.DEFAULT_BOTTOM_PADDING
 import com.example.chatappstarting.constants.DEFAULT_WIDTH_PERCENT
 import com.example.chatappstarting.presentation.ui.common.DefaultButton
+import com.example.chatappstarting.presentation.ui.common.DefaultNavIconAppAuth
 import com.example.chatappstarting.presentation.ui.common.DefaultOutlinedTextField
+
+@Preview
+@Composable
+fun PasswordScreenPreview() {
+    PasswordScreen()
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +60,8 @@ fun PasswordScreen(
     isPasswordMatched: State<Boolean> = mutableStateOf(true),
     onPasswordValueChanged: (String) -> Unit = {},
     onReEnterPasswordValueChanged: (String) -> Unit = {},
-    onOkClicked: () -> Unit = {}
+    onOkClicked: () -> Unit = {},
+    navigateBack: () -> Unit = {}
 ) {
     val showWarningText = remember {
         mutableStateOf(false)
@@ -64,7 +74,16 @@ fun PasswordScreen(
     val icon = if (rePassVisible.value) painterResource(id = R.drawable.eye_invisible)
     else painterResource(id = R.drawable.eye_visible)
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "") },
+                navigationIcon = {
+                    DefaultNavIconAppAuth { navigateBack() }
+                }
+            )
+        }
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxWidth()
