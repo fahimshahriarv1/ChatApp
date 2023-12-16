@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -91,53 +92,58 @@ fun PasswordScreen(
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
+                DisableSelection {
+                    DefaultOutlinedTextField(
+                        value = passwordValue.value,
+                        onValueChange = onPasswordValueChanged,
+                        labelString = stringResource(id = R.string.enter_password),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
+                        visualTransformation = PasswordVisualTransformation(),
+                        isError = !isPasswordMatched.value,
+                        modifier = Modifier.fillMaxWidth(DEFAULT_WIDTH_PERCENT)
+                    )
 
-                DefaultOutlinedTextField(
-                    value = passwordValue.value,
-                    onValueChange = onPasswordValueChanged,
-                    labelString = stringResource(id = R.string.enter_password),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(DEFAULT_WIDTH_PERCENT)
-                )
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                DefaultOutlinedTextField(
-                    value = reEnterPasswordValue.value,
-                    onValueChange = {
-                        onReEnterPasswordValueChanged(it)
-                        showWarningText.value = true
-                    },
-                    labelString = stringResource(id = R.string.re_enter_password),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    trailingIcon = {
-                        if (reEnterPasswordValue.value.isNotEmpty()) {
-                            IconButton(onClick = { rePassVisible.value = !rePassVisible.value }) {
-                                Icon(
-                                    painter = icon,
-                                    contentDescription = "pass toggle icon",
-                                    tint = colorResource(id = R.color.app_main),
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .clickable(
-                                            interactionSource = MutableInteractionSource(),
-                                            indication = null
-                                        ) { rePassVisible.value = !rePassVisible.value }
-                                )
-                            }
-                        } else
-                            rePassVisible.value = false
-                    },
-                    visualTransformation = if (rePassVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(DEFAULT_WIDTH_PERCENT)
-                )
+                    DefaultOutlinedTextField(
+                        value = reEnterPasswordValue.value,
+                        onValueChange = {
+                            onReEnterPasswordValueChanged(it)
+                            showWarningText.value = true
+                        },
+                        isError = !isPasswordMatched.value,
+                        labelString = stringResource(id = R.string.re_enter_password),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
+                        trailingIcon = {
+                            if (reEnterPasswordValue.value.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    rePassVisible.value = !rePassVisible.value
+                                }) {
+                                    Icon(
+                                        painter = icon,
+                                        contentDescription = "pass toggle icon",
+                                        tint = colorResource(id = R.color.app_main),
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable(
+                                                interactionSource = MutableInteractionSource(),
+                                                indication = null
+                                            ) { rePassVisible.value = !rePassVisible.value }
+                                    )
+                                }
+                            } else
+                                rePassVisible.value = false
+                        },
+                        visualTransformation = if (rePassVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(DEFAULT_WIDTH_PERCENT)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
