@@ -14,6 +14,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +30,7 @@ fun DefaultOutlinedTextField(
         Text(
             text = labelString,
             color = colorResource(id = R.color.gray_light),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Start
         )
     },
     shape: Shape = RoundedCornerShape(8.dp),
@@ -42,12 +43,14 @@ fun DefaultOutlinedTextField(
     singleLine: Boolean = true,
     textStyle: TextStyle = TextStyle(
         fontSize = 24.sp,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Start
     ),
     keyboardOptions: KeyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Password,
+        keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next
     ),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit) = {},
     onValueChange: (String) -> Unit = {}
 ) {
     OutlinedTextField(
@@ -60,6 +63,8 @@ fun DefaultOutlinedTextField(
         label = label,
         isError = isError,
         singleLine = singleLine,
+        trailingIcon = trailingIcon,
+        visualTransformation = visualTransformation,
         modifier = modifier
     )
 }
