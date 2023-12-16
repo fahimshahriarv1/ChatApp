@@ -69,7 +69,7 @@ fun OtpVerificationScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(top = padding.calculateTopPadding())
+                .padding(top = padding.calculateTopPadding() + DEFAULT_BOTTOM_PADDING)
                 .background(color = colorResource(id = R.color.white))
         ) {
             OutlinedTextField(
