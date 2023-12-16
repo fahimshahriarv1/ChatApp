@@ -27,6 +27,6 @@ class LoginViewModel @Inject constructor(appNavigator: AppNavigator) : BaseViewM
     }
 
     fun onSignUoClicked() {
-        navigateTo(Route.SignUpMobileScreen)
+        navigateTo(Route.SignUpMobileScreen.route)
     }
 }

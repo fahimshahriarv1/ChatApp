@@ -25,14 +25,14 @@ open class BaseViewModel @Inject constructor(protected val appNavigator: AppNavi
     }
 
     protected fun navigateTo(
-        route: Route,
+        route: String,
         popUpToRoute: Route? = null,
         inclusive: Boolean = false,
         isSingleTop: Boolean = false
     ) {
         viewModelScope.launch {
             appNavigator.navigateTo(
-                route.route,
+                route,
                 popUpToRoute?.route,
                 inclusive,
                 isSingleTop
