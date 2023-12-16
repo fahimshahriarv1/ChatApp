@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.chatappstarting.presentation.ui.base.ComposableLieCycleImpl
 import com.example.chatappstarting.presentation.ui.home.HomeViewModel
 import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
 import com.example.chatappstarting.presentation.ui.login.LoginViewModel
@@ -43,6 +44,8 @@ fun NavGraph(
                         navigate(navController, Route.AppSignUp)
                     }
                 )
+
+                ComposableLieCycleImpl()
             }
         }
 
@@ -65,6 +68,8 @@ fun NavGraph(
                         navController.navigateUp()
                     }
                 )
+
+                ComposableLieCycleImpl()
             }
             composable(route = Route.SignUpOtpScreen.route) {
                 val vm: SignUpViewModel = hiltViewModel()
