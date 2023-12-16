@@ -16,7 +16,7 @@ class SignUpViewModel @Inject constructor(
     private val _countryCode = mutableStateOf("+88")
     val countryCode: State<String> = _countryCode
 
-    private val _mobileNumber = mutableStateOf("")
+    private val _mobileNumber = mutableStateOf("01712946542")
     val mobileNumber: State<String> = _mobileNumber
 
     private val _otp = mutableStateOf("")
@@ -35,7 +35,7 @@ class SignUpViewModel @Inject constructor(
     val isPasswordMatched: State<Boolean> = _isPasswordMatched
 
     fun onSendOtpClicked() {
-        navigateTo(Route.SignUpOtpScreen)
+        navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
     }
 
     fun onCountryCodeSelected(code: String) {
@@ -62,10 +62,11 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onPasswordOkClicked() {
-        _isPasswordMatched.value = _reEnterPassword.value == _password.value
+        _isPasswordMatched.value =
+            _reEnterPassword.value == _password.value && _password.value.isNotEmpty()
         if (_isPasswordMatched.value) {
             navigateTo(
-                Route.AppMain,
+                Route.AppMain.fullRoute,
                 inclusive = true,
                 popUpToRoute = Route.AppAuth,
                 isSingleTop = true
@@ -74,6 +75,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onOtpOkClicked() {
-        navigateTo(Route.SignUpPasswordScreen)
+        navigateTo(Route.SignUpPasswordScreen(mobileNumber = _mobileNumber.value))
     }
 }
