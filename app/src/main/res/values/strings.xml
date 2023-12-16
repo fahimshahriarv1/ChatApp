@@ -11,4 +11,9 @@
     <string name="mobile_number">Mobile Number</string>
     <string name="enter_your_otp">Enter your OTP</string>
     <string name="ok">OK</string>
+    <string name="enter_password_for_your_account">Enter password for your account</string>
+    <string name="re_enter_password">Re enter password</string>
+    <string name="enter_password">Enter password</string>
+    <string name="password_matched">Password Matched</string>
+    <string name="password_mismatched">Password mismatched</string>
 </resources>
