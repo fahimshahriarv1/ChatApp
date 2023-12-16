@@ -7,13 +7,15 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavHostController
+import com.example.chatappstarting.presentation.navgraph.NavigationIntent
+import kotlinx.coroutines.channels.Channel
 
 @Composable
 fun ComposableLifecycle(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     onEvent: (LifecycleOwner, Lifecycle.Event) -> Unit
 ) {
-
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { source, event ->
             onEvent(source, event)
@@ -27,7 +29,7 @@ fun ComposableLifecycle(
 }
 
 @Composable
-fun ComposableLieCycleImpl(
+fun ComposableLifeCycleImpl(
     tag: String = "",
     onCreate: () -> Unit = {},
     onStart: () -> Unit = {},
@@ -71,4 +73,35 @@ fun ComposableLieCycleImpl(
             else -> {}
         }
     }
+}
+
+@Composable
+fun BaseComposable(
+    composable: @Composable (() -> Unit) = {},
+    navController: NavHostController,
+    navChannel: Channel<NavigationIntent>
+) {
+    composable()
+
+    BaseNavigationEffects(
+        navigationChannel = navChannel,
+        navHostController = navController
+    )
+}
+
+@Composable
+fun BaseComposableWithLifeCycle(
+    composable: @Composable (() -> Unit) = {},
+    composeLifeCycleImpl: @Composable (() -> Unit) = { ComposableLifeCycleImpl() },
+    navController: NavHostController,
+    navChannel: Channel<NavigationIntent>
+) {
+    composable()
+
+    composeLifeCycleImpl()
+
+    BaseNavigationEffects(
+        navigationChannel = navChannel,
+        navHostController = navController
+    )
 }
