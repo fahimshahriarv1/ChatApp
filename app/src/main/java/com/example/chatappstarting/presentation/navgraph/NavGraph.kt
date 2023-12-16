@@ -116,7 +116,8 @@ fun NavGraph(
                             isPasswordMatched = vm.isPasswordMatched,
                             onPasswordValueChanged = vm::onPasswordChanged,
                             onReEnterPasswordValueChanged = vm::onReEnterPasswordChanged,
-                            onOkClicked = vm::onPasswordOkClicked
+                            onOkClicked = vm::onPasswordOkClicked,
+                            navigateBack = { navController.navigateUp() }
                         )
                     },
                     navController = navController,
