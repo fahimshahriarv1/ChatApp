@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="App.Starting.Theme" parent="Theme.AppCompat">
+        <item name="android:windowBackground">#1C1E21</item>
+    </style>
+</resources>
