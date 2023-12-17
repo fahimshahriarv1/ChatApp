@@ -7,4 +7,5 @@ interface LocalUserManger {
     fun getUserLoggedInState(): Flow<Boolean>
     suspend fun saveUserToken(token: String)
     suspend fun removeLoggedInState()
+    suspend fun saveMobileNumber(number: String)
 }
