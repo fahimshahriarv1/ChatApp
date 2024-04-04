@@ -7,6 +7,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     kotlin("android")
+    id("com.google.gms.google-services")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -65,6 +67,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -96,14 +99,37 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    //firestore
+    implementation("com.google.firebase:firebase-firestore:24.10.0")
+
     //Splash Api
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     //Datastore
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     //Dagger Hilt
-    implementation ("com.google.dagger:hilt-android:2.48")
-    kapt ("com.google.dagger:hilt-compiler:2.46.1")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.46.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+    // ... Room Database
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-rxjava2:2.6.1")
+
+    //Ktor
+    implementation("io.ktor:ktor-client-core:2.3.1")
+    implementation("io.ktor:ktor-client-android:2.3.1")
+    implementation("io.ktor:ktor-client-gson:2.3.1")
+    implementation("io.ktor:ktor-serialization-gson:2.3.1")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
+
+    //firebaseAuth
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+
+    //firebaseCore
+    implementation("com.google.firebase:firebase-analytics")
 }

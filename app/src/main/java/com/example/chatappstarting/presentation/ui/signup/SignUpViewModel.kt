@@ -1,17 +1,30 @@
 package com.example.chatappstarting.presentation.ui.signup
 
+import android.animation.PropertyValuesHolder
+import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseViewModel
 import com.example.chatappstarting.presentation.utils.isPhoneNumberValid
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    appNavigator: AppNavigator
+    appNavigator: AppNavigator,
+    val firebaseAuth: FirebaseAuth,
 ) : BaseViewModel(appNavigator) {
     private val _countryCode = mutableStateOf("+88")
     val countryCode: State<String> = _countryCode
@@ -33,6 +46,14 @@ class SignUpViewModel @Inject constructor(
 
     private val _isPasswordMatched = mutableStateOf(true)
     val isPasswordMatched: State<Boolean> = _isPasswordMatched
+
+    var verificationCode = ""
+    lateinit var resendToken: ForceResendingToken
+    var isResend = false
+
+    init {
+        showToast("yeppeeeee")
+    }
 
     fun onCountryCodeSelected(code: String) {
         _countryCode.value = code
@@ -57,7 +78,20 @@ class SignUpViewModel @Inject constructor(
         _isPasswordMatched.value = _reEnterPassword.value == _password.value
     }
 
-    fun onSendOtpClicked() {
+    fun onSendOtpClicked(auth: PhoneAuthOptions.Builder) {
+        navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
+        viewModelScope.launch {
+            if (isResend)
+                PhoneAuthProvider.verifyPhoneNumber(
+                    auth.setForceResendingToken(resendToken).build()
+                )
+            else
+                PhoneAuthProvider.verifyPhoneNumber(auth.build())
+        }
+
+    }
+
+    fun onVerificationSuccess() {
         navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
     }
 
