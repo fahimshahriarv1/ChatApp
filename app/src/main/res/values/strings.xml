@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">ChatAppStarting</string>
+    <string name="app_name">Let\'s Chat</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="home">Home</string>
+    <string name="dont_hav_an_acocunt">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="enter_mobile_number">Enter your mobile number</string>
+    <string name="sent_otp">Sent OTP</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="enter_your_otp">Enter your OTP</string>
+    <string name="ok">OK</string>
+    <string name="enter_password_for_your_account">Enter password for your account</string>
+    <string name="re_enter_password">Re enter password</string>
+    <string name="enter_password">Enter password</string>
+    <string name="password_matched">Password Matched</string>
+    <string name="password_mismatched">Password mismatched</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
+    <string name="go_back">Go Back</string>
 </resources>
