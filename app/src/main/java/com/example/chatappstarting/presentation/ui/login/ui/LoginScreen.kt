@@ -224,6 +224,4 @@ fun LoginScreen(
             })
         }
     }
-
-    //ComposableLieCycleImpl()
 }
