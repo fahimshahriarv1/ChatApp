@@ -23,7 +23,7 @@ local.properties
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 
-# Android Studio 3 in .gitignore file.
+# Android Studio in .gitignore file.
 .idea/caches
 .idea/modules.xml
 .idea/.name
