@@ -26,7 +26,7 @@ class LoginViewModel @Inject constructor(appNavigator: AppNavigator) : BaseViewM
         isError.value = !isError.value
     }
 
-    fun onSignUoClicked() {
-        navigateTo(Route.SignUpMobileScreen.route)
+    fun onSignUpClicked() {
+        navigateTo(Route.AppSignUp.route)
     }
 }

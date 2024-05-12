@@ -28,7 +28,6 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.auth.UserInfo
 import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.TimeUnit
 
@@ -58,7 +57,7 @@ fun NavGraph(
                             unameChanged = vm::onUnameChanged,
                             passChanged = vm::onPassChanged,
                             onLoginClicked = vm::onLoginClicked,
-                            onSignUoClicked = vm::onSignUoClicked
+                            onSignUpClicked = vm::onSignUpClicked
                         )
                     },
                     navController = navController,

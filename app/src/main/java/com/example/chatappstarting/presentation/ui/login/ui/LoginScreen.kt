@@ -58,7 +58,7 @@ fun LoginScreen(
     unameChanged: (String) -> Unit = {},
     passChanged: (String) -> Unit = {},
     onLoginClicked: () -> Unit = {},
-    onSignUoClicked: () -> Unit = {}
+    onSignUpClicked: () -> Unit = {}
 ) {
     val isPassVisible = remember {
         mutableStateOf(false)
@@ -219,7 +219,7 @@ fun LoginScreen(
                 signUp.getStringAnnotations(it, it)
                     .firstOrNull()?.let { span ->
                         if (span.tag == "Sign up")
-                            onSignUoClicked()
+                            onSignUpClicked()
                     }
             })
         }
