@@ -14,9 +14,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class BaseViewModel @Inject constructor(protected val appNavigator: AppNavigator) :
+open class BaseViewModel @Inject constructor() :
     ViewModel() {
-    val navChannel = appNavigator.navigationChannel
+    @Inject
+    lateinit var appNavigator: AppNavigator
+
+    val navChannel by lazy { appNavigator.navigationChannel }
     val loaderState = mutableStateOf(false)
 
     private val _showToast = MutableSharedFlow<String?>()

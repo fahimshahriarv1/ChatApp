@@ -33,7 +33,7 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideGetUserLoginState(localUserManger: LocalUserManger): GetUserLoggedInStateUseCase =
+    fun provideUserLoginState(localUserManger: LocalUserManger): GetUserLoggedInStateUseCase =
         GetUserLoggedInStateUseCase(localUserManger)
 
     @Provides

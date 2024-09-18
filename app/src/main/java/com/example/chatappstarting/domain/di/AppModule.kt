@@ -1,6 +1,5 @@
 package com.example.chatappstarting.domain.di
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
