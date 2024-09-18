@@ -2,7 +2,6 @@ package com.example.chatappstarting.presentation.navgraph
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -15,7 +14,7 @@ import androidx.navigation.navArgument
 import com.example.chatappstarting.constants.MOBILE_NUMBER
 import com.example.chatappstarting.data.room.model.Argument
 import com.example.chatappstarting.presentation.ui.base.BaseComposable
-import com.example.chatappstarting.presentation.ui.utils.showToastMessage
+import com.example.chatappstarting.presentation.ui.base.FlowObserver
 import com.example.chatappstarting.presentation.ui.home.HomeViewModel
 import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
 import com.example.chatappstarting.presentation.ui.login.LoginViewModel
@@ -24,11 +23,11 @@ import com.example.chatappstarting.presentation.ui.signup.MobileNumberScreen
 import com.example.chatappstarting.presentation.ui.signup.OtpVerificationScreen
 import com.example.chatappstarting.presentation.ui.signup.PasswordScreen
 import com.example.chatappstarting.presentation.ui.signup.SignUpViewModel
+import com.example.chatappstarting.presentation.ui.utils.showToastMessage
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
-import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -54,6 +53,7 @@ fun NavGraph(
                             uname = vm.uname,
                             pass = vm.pass,
                             isError = vm.isError,
+                            isLoading = vm.loaderState.value,
                             unameChanged = vm::onUnameChanged,
                             passChanged = vm::onPassChanged,
                             onLoginClicked = vm::onLoginClicked,
@@ -64,13 +64,11 @@ fun NavGraph(
                     navChannel = vm.navChannel
                 )
 
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collect {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
         }
 
@@ -140,13 +138,11 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collect {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
             composable(
                 route = Route.SignUpOtpScreen.route + "/{$MOBILE_NUMBER}",
@@ -170,13 +166,11 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collect {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
 
             composable(
@@ -204,13 +198,11 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collectLatest {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
         }
 
@@ -229,13 +221,11 @@ fun NavGraph(
                     navChannel = vm.navChannel
                 )
 
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collectLatest {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
         }
     }

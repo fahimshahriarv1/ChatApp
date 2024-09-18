@@ -16,13 +16,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -48,13 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappstarting.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun LoginScreen(
     uname: MutableState<String> = mutableStateOf(""),
     pass: MutableState<String> = mutableStateOf(""),
     isError: MutableState<Boolean> = mutableStateOf(false),
+    isLoading: Boolean = false,
     unameChanged: (String) -> Unit = {},
     passChanged: (String) -> Unit = {},
     onLoginClicked: () -> Unit = {},
@@ -101,7 +100,7 @@ fun LoginScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = colorResource(id = R.color.app_main),
                     errorBorderColor = colorResource(id = R.color.error),
                     unfocusedBorderColor = colorResource(id = R.color.gray_light)
@@ -132,7 +131,9 @@ fun LoginScreen(
                                     modifier = Modifier
                                         .size(20.dp)
                                         .clickable(
-                                            interactionSource = MutableInteractionSource(),
+                                            interactionSource = remember {
+                                                MutableInteractionSource()
+                                            },
                                             indication = null
                                         ) { isPassVisible.value = !isPassVisible.value }
                                 )
@@ -146,7 +147,7 @@ fun LoginScreen(
                             color = colorResource(id = R.color.gray_light)
                         )
                     },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = colorResource(id = R.color.app_main),
                         errorBorderColor = colorResource(id = R.color.error),
                         unfocusedBorderColor = colorResource(id = R.color.gray_light)
@@ -169,6 +170,7 @@ fun LoginScreen(
             Button(
                 onClick = onLoginClicked,
                 shape = RoundedCornerShape(8.dp),
+                enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.app_main)
                 ),
@@ -221,7 +223,8 @@ fun LoginScreen(
                         if (span.tag == "Sign up")
                             onSignUpClicked()
                     }
-            })
+            }
+            )
         }
     }
 }
