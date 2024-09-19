@@ -1,31 +1,21 @@
 package com.example.chatappstarting.presentation.ui.signup
 
-import android.animation.PropertyValuesHolder
-import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseViewModel
 import com.example.chatappstarting.presentation.utils.isPhoneNumberValid
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(
-    appNavigator: AppNavigator,
-    val firebaseAuth: FirebaseAuth,
-) : BaseViewModel(appNavigator) {
+class SignUpViewModel @Inject constructor(val firebaseAuth: FirebaseAuth) : BaseViewModel() {
     private val _countryCode = mutableStateOf("+88")
     val countryCode: State<String> = _countryCode
 

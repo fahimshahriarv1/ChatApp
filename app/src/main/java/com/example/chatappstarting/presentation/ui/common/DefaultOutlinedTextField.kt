@@ -2,11 +2,10 @@ package com.example.chatappstarting.presentation.ui.common
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappstarting.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultOutlinedTextField(
     modifier: Modifier = Modifier,
@@ -35,7 +33,7 @@ fun DefaultOutlinedTextField(
     },
     shape: Shape = RoundedCornerShape(8.dp),
     isError: Boolean = false,
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = colorResource(id = R.color.app_main),
         errorBorderColor = colorResource(id = R.color.error),
         unfocusedBorderColor = colorResource(id = R.color.gray_light)

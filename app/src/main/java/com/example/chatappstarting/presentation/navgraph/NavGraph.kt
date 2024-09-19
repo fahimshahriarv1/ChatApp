@@ -2,8 +2,10 @@ package com.example.chatappstarting.presentation.navgraph
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -213,9 +215,12 @@ fun NavGraph(
             composable(route = Route.HomeScreen.route) {
                 val vm: HomeViewModel = hiltViewModel()
                 val context = LocalContext.current
+
+                val list by vm.userList.collectAsStateWithLifecycle(initialValue = listOf())
+
                 BaseComposable(
                     composable = {
-                        HomeScreen()
+                        HomeScreen(list,vm::logout)
                     },
                     navController = navController,
                     navChannel = vm.navChannel

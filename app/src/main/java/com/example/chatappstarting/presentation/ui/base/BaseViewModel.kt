@@ -3,6 +3,7 @@ package com.example.chatappstarting.presentation.ui.base
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatappstarting.domain.usecases.LogoutUseCase
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,9 @@ open class BaseViewModel @Inject constructor() :
     ViewModel() {
     @Inject
     lateinit var appNavigator: AppNavigator
+
+    @Inject
+    lateinit var logoutUseCase: LogoutUseCase
 
     val navChannel by lazy { appNavigator.navigationChannel }
     val loaderState = mutableStateOf(false)
@@ -57,6 +61,13 @@ open class BaseViewModel @Inject constructor() :
                 inclusive,
                 isSingleTop
             )
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase.logout()
+            navigateTo(Route.LoginScreen.route, isSingleTop = true)
         }
     }
 }

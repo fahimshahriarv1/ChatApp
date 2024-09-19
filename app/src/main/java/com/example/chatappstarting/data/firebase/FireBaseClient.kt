@@ -10,9 +10,11 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
 
     private val TAG = "Firebase Client"
 
+    private val gson = Gson()
+
     fun login(
         uname: String,
-        onSendPassword: (String) -> Unit = {},
+        onSendPassword: (UserInfo) -> Unit = {},
         onUserNotExist: () -> Unit = {}
     ) {
         val docRef = db.collection("letsChatDbMain").document(uname)
@@ -27,8 +29,22 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
                     onUserNotExist()
                 else {
                     val info = Gson().fromJson(Gson().toJson(data), UserInfo::class.java)
-                    onSendPassword(info.password)
+                    onSendPassword(info)
                 }
             }
+    }
+
+    fun observeUserStatus(listener: (List<UserInfo>?) -> Unit = {}) {
+        val docRef = db.collection("letsChatDbMain")
+
+        var list: List<UserInfo>?
+        docRef.addSnapshotListener { value, _ ->
+            list = value?.documents?.map {
+                Log.d(TAG, it.toString())
+                gson.fromJson(gson.toJson(it.data), UserInfo::class.java)
+                //UserInfo()
+            }
+            listener(list)
+        }
     }
 }
