@@ -3,6 +3,7 @@ package com.example.chatappstarting.presentation.ui.home
 import androidx.lifecycle.viewModelScope
 import com.example.chatappstarting.data.firebase.FireBaseClient
 import com.example.chatappstarting.data.room.model.UserInfo
+import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.domain.usecases.GetConnectedUsersUseCase
 import com.example.chatappstarting.presentation.ui.common.CommonViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,7 @@ class HomeViewModel @Inject constructor(
     getConnectedUsersUseCase: GetConnectedUsersUseCase
 ) : CommonViewModel() {
 
-    private val _userList = MutableSharedFlow<List<UserInfo>>()
+    private val _userList = MutableSharedFlow<List<UserInformation>>()
     val userList = _userList.asSharedFlow()
 
     private var connectionList = listOf<String>()
@@ -35,7 +36,7 @@ class HomeViewModel @Inject constructor(
     private fun addStatusObserver() {
         client.observeUserStatus { list ->
             viewModelScope.launch {
-                _userList.emit(list?.filter { user -> user.user_name in connectionList } ?: emptyList())
+                _userList.emit(list?.filter { user -> user.userName in connectionList } ?: emptyList())
             }
         }
     }

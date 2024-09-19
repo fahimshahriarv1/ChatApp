@@ -3,7 +3,7 @@ package com.example.chatappstarting.presentation.ui.login
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.chatappstarting.data.firebase.FireBaseClient
-import com.example.chatappstarting.data.room.model.UserInfo
+import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.domain.usecases.SaveConnectedUsersUseCase
 import com.example.chatappstarting.domain.usecases.SaveMobileUseCase
 import com.example.chatappstarting.domain.usecases.SaveNameUseCase
@@ -46,14 +46,14 @@ class LoginViewModel @Inject constructor(
         navigateTo(Route.AppSignUp.route)
     }
 
-    private fun checkPwd(user: UserInfo) {
+    private fun checkPwd(user: UserInformation) {
         if (user.password == pass.value) {
             viewModelScope.launch {
-                saveTokenUseCase.saveToken(user.user_name)
+                saveTokenUseCase.saveToken(user.userName)
                 saveMobileUseCase.saveMobileNumber(uname.value)
-                saveConnectedUsersUseCase.saveConnectedList(user.getConnectedUserNames())
+                saveConnectedUsersUseCase.saveConnectedList(user.usersConnected)
                 setNameUseCase.saveName(user.name)
-                setUserNameUseCase.saveUserName(user.user_name)
+                setUserNameUseCase.saveUserName(user.userName)
                 navigateTo(Route.HomeScreen.route, isSingleTop = true)
             }
             loaderState.value = false

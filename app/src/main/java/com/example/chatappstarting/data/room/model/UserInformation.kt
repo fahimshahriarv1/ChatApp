@@ -2,10 +2,10 @@ package com.example.chatappstarting.data.room.model
 
 import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
 
-data class UserInfo(
+data class UserInformation(
     val password: String = "",
-    val status: String = "",
+    val status: StatusEnum = StatusEnum.NONE,
     val name: String = "",
-    val user_name: String = "",
-    val users_connected: List<String> = listOf()
+    val userName: String = "",
+    val usersConnected: List<String> = listOf()
 )

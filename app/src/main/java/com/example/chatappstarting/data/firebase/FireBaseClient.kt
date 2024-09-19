@@ -2,7 +2,9 @@ package com.example.chatappstarting.data.firebase
 
 import android.util.Log
 import com.example.chatappstarting.data.room.model.UserInfo
+import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
+import com.example.chatappstarting.presentation.utils.mapInfo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import javax.inject.Inject
@@ -15,7 +17,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
 
     fun login(
         uname: String,
-        onSendPassword: (UserInfo) -> Unit = {},
+        onSendPassword: (UserInformation) -> Unit = {},
         onUserNotExist: () -> Unit = {}
     ) {
         val docRef = db.collection("letsChatDbMain").document(uname)
@@ -30,7 +32,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
                     onUserNotExist()
                 else {
                     val info = Gson().fromJson(Gson().toJson(data), UserInfo::class.java)
-                    onSendPassword(info)
+                    onSendPassword(info.mapInfo())
                 }
             }
     }
@@ -41,7 +43,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             password = pass,
             user_name = mobile,
             status = "online",
-            users_connected = listOf()
+            users_connected = listOf("")
         )
         val docRef = db.collection("letsChatDbMain")
 
@@ -55,7 +57,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             }
     }
 
-    fun observeUserStatus(listener: (List<UserInfo>?) -> Unit = {}) {
+    fun observeUserStatus(listener: (List<UserInformation>?) -> Unit = {}) {
         val docRef = db.collection("letsChatDbMain")
 
         var list: List<UserInfo>?
@@ -63,9 +65,10 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             list = value?.documents?.map {
                 Log.d(TAG, it.toString())
                 gson.fromJson(gson.toJson(it.data), UserInfo::class.java)
-                //UserInfo()
             }
-            listener(list)
+            listener(
+                list?.map { it.mapInfo() }
+            )
         }
     }
 

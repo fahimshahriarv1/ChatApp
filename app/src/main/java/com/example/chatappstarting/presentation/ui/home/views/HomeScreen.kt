@@ -27,13 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappstarting.R
-import com.example.chatappstarting.data.room.model.UserInfo
+import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
 import com.example.chatappstarting.presentation.widgets.TopAppBarActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(name: String = "", list: List<UserInfo>, onLogoutClicked: () -> Unit = {}) {
+fun HomeScreen(name: String = "", list: List<UserInformation>, onLogoutClicked: () -> Unit = {}) {
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
@@ -71,15 +71,13 @@ fun HomeScreen(name: String = "", list: List<UserInfo>, onLogoutClicked: () -> U
                 }
                 if (list.isEmpty()) {
                     item {
-                        Text(
-                            text = "No one is online",
-                        )
+                        Text(text = "No one is online")
                     }
                 }
                 items(list + list + list + list + list + list + list + list + list + list + list + list + list + list + list + list + list + list + list + list) { userInfo ->
                     UserComponent(
                         name = userInfo.name,
-                        isOnline = userInfo.getStatus() == StatusEnum.ONLINE
+                        isOnline = userInfo.status == StatusEnum.ONLINE
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))

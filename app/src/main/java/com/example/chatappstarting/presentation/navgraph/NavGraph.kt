@@ -1,7 +1,6 @@
 package com.example.chatappstarting.presentation.navgraph
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -27,11 +26,6 @@ import com.example.chatappstarting.presentation.ui.signup.OtpVerificationScreen
 import com.example.chatappstarting.presentation.ui.signup.PasswordScreen
 import com.example.chatappstarting.presentation.ui.signup.SignUpViewModel
 import com.example.chatappstarting.presentation.ui.utils.showToastMessage
-import com.google.firebase.FirebaseException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun NavGraph(
@@ -128,38 +122,7 @@ fun NavGraph(
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
 
-                val auth = PhoneAuthOptions.newBuilder(vm.firebaseAuth)
-                    .setPhoneNumber(vm.countryCode.value + vm.mobileNumber.value)
-                    .setTimeout(60, TimeUnit.SECONDS)
-                    .setActivity(LocalContext.current as Activity)
-                    .setCallbacks(
-                        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                                //onSendOtpClicked()
-                                vm.showToast("Verification Success")
-                            }
-
-                            override fun onVerificationFailed(p0: FirebaseException) {
-                                vm.showToast("Unable to verify")
-                                p0.printStackTrace()
-                            }
-
-                            override fun onCodeSent(
-                                p0: String,
-                                p1: PhoneAuthProvider.ForceResendingToken
-                            ) {
-                                super.onCodeSent(p0, p1)
-
-                                Log.d("OTP sent", "$p0 $p1")
-                                vm.verificationCode = p0
-                                vm.resendToken = p1
-                                vm.isResend = true
-                                vm.showToast("Otp sent")
-                            }
-                        }
-                    )
-
-                vm.onSendOtpClicked(auth)
+                vm.onSendOtpClicked(LocalContext.current as Activity)
 
                 BaseComposable(
                     composable = {
@@ -167,7 +130,7 @@ fun NavGraph(
                             otp = vm.otp,
                             onOtpValueChanged = vm::onOtpChanged,
                             navigateBack = { navController.navigateUp() },
-                            onOkClicked = vm::onOtpOkClicked
+                            onOkClicked = vm::verifyOtp
                         )
                     },
                     navController = navController,
@@ -190,6 +153,7 @@ fun NavGraph(
                 })
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
+
                 BaseComposable(
                     composable = {
                         PasswordScreen(
