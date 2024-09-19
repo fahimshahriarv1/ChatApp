@@ -128,6 +128,7 @@ fun NavGraph(
                     composable = {
                         OtpVerificationScreen(
                             otp = vm.otp,
+                            isLoading = vm.loaderState.value,
                             onOtpValueChanged = vm::onOtpChanged,
                             navigateBack = { navController.navigateUp() },
                             onOkClicked = vm::verifyOtp
@@ -160,6 +161,7 @@ fun NavGraph(
                             passwordValue = vm.password,
                             reEnterPasswordValue = vm.reEnterPassword,
                             isPasswordMatched = vm.isPasswordMatched,
+                            isLoading = vm.loaderState.value,
                             onPasswordValueChanged = vm::onPasswordChanged,
                             onReEnterPasswordValueChanged = vm::onReEnterPasswordChanged,
                             onOkClicked = vm::onPasswordOkClicked,
@@ -192,7 +194,7 @@ fun NavGraph(
 
                 BaseComposable(
                     composable = {
-                        HomeScreen(name, list, vm::logout)
+                        HomeScreen(name, list, vm.loaderState.value, vm::logout)
                     },
                     navController = navController,
                     navChannel = vm.navChannel

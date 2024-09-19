@@ -35,6 +35,7 @@ import com.example.chatappstarting.presentation.ui.common.DefaultNavIconAppAuth
 @Composable
 fun OtpVerificationScreen(
     otp: State<String> = mutableStateOf(""),
+    isLoading:Boolean = false,
     onOtpValueChanged: (String) -> Unit = {},
     onOkClicked: () -> Unit = {},
     navigateBack: () -> Unit = {}
@@ -88,6 +89,7 @@ fun OtpVerificationScreen(
             DefaultButton(
                 oncClick = onOkClicked,
                 buttonTxt = stringResource(id = R.string.ok),
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth(DEFAULT_WIDTH_PERCENT)
                     .align(Alignment.BottomCenter)

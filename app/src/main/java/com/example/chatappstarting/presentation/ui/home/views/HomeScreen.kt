@@ -33,7 +33,12 @@ import com.example.chatappstarting.presentation.widgets.TopAppBarActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(name: String = "", list: List<UserInformation>, onLogoutClicked: () -> Unit = {}) {
+fun HomeScreen(
+    name: String = "",
+    list: List<UserInformation>,
+    isLoading: Boolean = false,
+    onLogoutClicked: () -> Unit = {}
+) {
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(

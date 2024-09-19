@@ -77,7 +77,7 @@ class SignUpViewModel @Inject constructor(
                         p1: PhoneAuthProvider.ForceResendingToken
                     ) {
                         super.onCodeSent(p0, p1)
-
+                        loaderState.value = false
                         Log.d("OTP sent", "$p0 $p1")
                         verificationID = p0
                         resendToken = p1
@@ -117,7 +117,7 @@ class SignUpViewModel @Inject constructor(
 
     fun onSendOtpClicked(context: Activity) {
         auth.setActivity(context)
-
+        loaderState.value = true
         viewModelScope.launch {
             if (isResend)
                 PhoneAuthProvider.verifyPhoneNumber(
@@ -126,14 +126,16 @@ class SignUpViewModel @Inject constructor(
             else
                 PhoneAuthProvider.verifyPhoneNumber(auth.build())
         }
-
     }
 
     fun verifyOtp() {
         val credential = PhoneAuthProvider.getCredential(verificationID, otp.value)
+        loaderState.value = true
         firebaseAuth.signInWithCredential(credential).addOnSuccessListener {
+            loaderState.value = false
             onOtpVerified()
         }.addOnFailureListener {
+            loaderState.value = false
             showToast("wrong otp")
         }
     }
@@ -143,26 +145,29 @@ class SignUpViewModel @Inject constructor(
             _reEnterPassword.value == _password.value && _password.value.isNotEmpty()
 
         if (_isPasswordMatched.value)
-            client.createUser(
-                mobileNumber.value,
-                password.value,
-                onSuccess = {
-                    viewModelScope.launch {
-                        setNameUseCase.saveName(mobileNumber.value)
-                        setUnameUseCase.saveUserName(mobileNumber.value)
-                        saveTokenUseCase.saveToken(mobileNumber.value)
-                        navigateTo(
-                            Route.AppMain.fullRoute,
-                            inclusive = true,
-                            popUpToRoute = Route.AppAuth,
-                            isSingleTop = true
-                        )
-                    }
-                },
-                onFailure = {
-                    showToast("Something went wrong")
+            loaderState.value = true
+        client.createUser(
+            mobileNumber.value,
+            password.value,
+            onSuccess = {
+                loaderState.value = false
+
+                viewModelScope.launch {
+                    setNameUseCase.saveName(mobileNumber.value)
+                    setUnameUseCase.saveUserName(mobileNumber.value)
+                    saveTokenUseCase.saveToken(mobileNumber.value)
+                    navigateTo(
+                        Route.AppMain.fullRoute,
+                        inclusive = true,
+                        popUpToRoute = Route.AppAuth,
+                        isSingleTop = true
+                    )
                 }
-            )
+            },
+            onFailure = {
+                showToast("Something went wrong")
+            }
+        )
     }
 
     fun onMobileNumberInputCorrect() {
