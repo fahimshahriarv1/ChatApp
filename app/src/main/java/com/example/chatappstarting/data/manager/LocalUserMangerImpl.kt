@@ -10,9 +10,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.chatappstarting.constants.IS_LOGGED_IN
 import com.example.chatappstarting.constants.LOCAL_USER_MANAGER
 import com.example.chatappstarting.constants.MOBILE_NUMBER
+import com.example.chatappstarting.constants.NAME
 import com.example.chatappstarting.constants.REFRESH_TOKEN
 import com.example.chatappstarting.constants.TOKEN
 import com.example.chatappstarting.constants.USER_LIST
+import com.example.chatappstarting.constants.USER_NAME
 import com.example.chatappstarting.domain.manager.LocalUserManger
 import com.example.chatappstarting.presentation.utils.emptyIfNull
 import kotlinx.coroutines.flow.Flow
@@ -61,6 +63,30 @@ class LocalUserMangerImpl(private val context: Context) : LocalUserManger {
         }
     }
 
+    override suspend fun getUserName(): Flow<String> {
+        return context.dataStore.data.map {
+            it[PreferencesKeys.userName].emptyIfNull()
+        }
+    }
+
+    override suspend fun getUserNameOnly(): Flow<String> {
+        return context.dataStore.data.map {
+            it[PreferencesKeys.name].emptyIfNull()
+        }
+    }
+
+    override suspend fun setUserName(uName: String) {
+        context.dataStore.edit { localUserInfo ->
+            localUserInfo[PreferencesKeys.userName] = uName
+        }
+    }
+
+    override suspend fun setUserNameOnly(name: String) {
+        context.dataStore.edit { localUserInfo ->
+            localUserInfo[PreferencesKeys.name] = name
+        }
+    }
+
     override fun getUserToken(): Flow<String> {
         return context.dataStore.data.map {
             it[PreferencesKeys.token].emptyIfNull()
@@ -82,4 +108,6 @@ private object PreferencesKeys {
     val refreshToken = stringPreferencesKey(name = REFRESH_TOKEN)
     val mobileNumber = stringPreferencesKey(name = MOBILE_NUMBER)
     val users = stringPreferencesKey(name = USER_LIST)
+    val userName = stringPreferencesKey(name = USER_NAME)
+    val name = stringPreferencesKey(name = NAME)
 }

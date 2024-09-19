@@ -3,6 +3,7 @@ package com.example.chatappstarting.presentation.ui.signup
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.example.chatappstarting.data.firebase.FireBaseClient
 import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseViewModel
 import com.example.chatappstarting.presentation.utils.isPhoneNumberValid
@@ -15,7 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(val firebaseAuth: FirebaseAuth) : BaseViewModel() {
+class SignUpViewModel @Inject constructor(
+    val firebaseAuth: FirebaseAuth,
+    private val client: FireBaseClient
+) : BaseViewModel() {
     private val _countryCode = mutableStateOf("+88")
     val countryCode: State<String> = _countryCode
 
@@ -69,7 +73,6 @@ class SignUpViewModel @Inject constructor(val firebaseAuth: FirebaseAuth) : Base
     }
 
     fun onSendOtpClicked(auth: PhoneAuthOptions.Builder) {
-        navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
         viewModelScope.launch {
             if (isResend)
                 PhoneAuthProvider.verifyPhoneNumber(
@@ -88,14 +91,28 @@ class SignUpViewModel @Inject constructor(val firebaseAuth: FirebaseAuth) : Base
     fun onPasswordOkClicked() {
         _isPasswordMatched.value =
             _reEnterPassword.value == _password.value && _password.value.isNotEmpty()
-        if (_isPasswordMatched.value) {
-            navigateTo(
-                Route.AppMain.fullRoute,
-                inclusive = true,
-                popUpToRoute = Route.AppAuth,
-                isSingleTop = true
+
+        if (_isPasswordMatched.value)
+            client.createUser(
+                mobileNumber.value,
+                password.value,
+                onSuccess = {
+                    navigateTo(
+                        Route.AppMain.fullRoute,
+                        inclusive = true,
+                        popUpToRoute = Route.AppAuth,
+                        isSingleTop = true
+                    )
+                },
+                onFailure = {
+                    showToast("Something went wrong")
+                }
             )
-        }
+    }
+
+    fun onMobileNumberInputCorrect() {
+        if (mobileNumber.value.isPhoneNumberValid())
+            navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
     }
 
     fun onOtpOkClicked() {

@@ -2,6 +2,7 @@ package com.example.chatappstarting.data.firebase
 
 import android.util.Log
 import com.example.chatappstarting.data.room.model.UserInfo
+import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import javax.inject.Inject
@@ -34,6 +35,26 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             }
     }
 
+    fun createUser(mobile: String, pass: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+        val user = UserInfo(
+            name = mobile,
+            password = pass,
+            user_name = mobile,
+            status = "online",
+            users_connected = listOf()
+        )
+        val docRef = db.collection("letsChatDbMain")
+
+        docRef.document(mobile)
+            .set(user)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure()
+            }
+    }
+
     fun observeUserStatus(listener: (List<UserInfo>?) -> Unit = {}) {
         val docRef = db.collection("letsChatDbMain")
 
@@ -47,4 +68,44 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             listener(list)
         }
     }
+
+    fun addConnection(
+        uname: String,
+        user: List<String>,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
+        val docRef = db.collection("letsChatDbMain")
+
+        docRef.document(uname)
+            .set(ConnectedList(user))
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+                onFailure()
+            }
+    }
+
+    fun setStatus(uname: String, status: StatusEnum = StatusEnum.NONE) {
+        val docRef = db.collection("letsChatDbMain")
+
+        docRef.document(uname)
+            .set(
+                mapOf(
+                    "status" to when (status) {
+                        StatusEnum.ONLINE -> "online"
+                        else -> "offline"
+                    }
+                )
+            )
+            .addOnSuccessListener {
+            }
+            .addOnFailureListener {
+                setStatus(uname, status)
+            }
+    }
 }
+
+private data class ConnectedList(val users_connected: List<String>)

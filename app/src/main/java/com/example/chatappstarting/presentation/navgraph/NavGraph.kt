@@ -1,6 +1,7 @@
 package com.example.chatappstarting.presentation.navgraph
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -90,6 +91,43 @@ fun NavGraph(
                 )
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
+                BaseComposable(
+                    composable = {
+                        MobileNumberScreen(
+                            countryCode = vm.countryCode,
+                            mobileNumber = vm.mobileNumber,
+                            isError = vm.isMobileNumberError,
+                            onCountryCodeClicked = vm::onCountryCodeSelected,
+                            mobileNumberChanged = vm::onMobileNumberChanged,
+                            onSendOtpClicked = {
+                                navController.navigate(Route.SignUpOtpScreen(mobileNumber = vm.mobileNumber.value))
+                            },
+                            navigateBack = {
+                                navController.navigateUp()
+                            }
+                        )
+                    },
+                    navController = navController,
+                    navChannel = vm.navChannel
+                )
+
+                val context = LocalContext.current
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
+                    }
+                }
+            }
+
+            composable(
+                route = Route.SignUpOtpScreen.route + "/{$MOBILE_NUMBER}",
+                arguments = listOf(navArgument(MOBILE_NUMBER) {
+                    type = NavType.StringType
+                    nullable = true
+                })
+            ) {
+                val vm: SignUpViewModel = hiltViewModel()
+
                 val auth = PhoneAuthOptions.newBuilder(vm.firebaseAuth)
                     .setPhoneNumber(vm.countryCode.value + vm.mobileNumber.value)
                     .setTimeout(60, TimeUnit.SECONDS)
@@ -111,6 +149,8 @@ fun NavGraph(
                                 p1: PhoneAuthProvider.ForceResendingToken
                             ) {
                                 super.onCodeSent(p0, p1)
+
+                                Log.d("OTP sent", "$p0 $p1")
                                 vm.verificationCode = p0
                                 vm.resendToken = p1
                                 vm.isResend = true
@@ -119,41 +159,8 @@ fun NavGraph(
                         }
                     )
 
-                BaseComposable(
-                    composable = {
-                        MobileNumberScreen(
-                            countryCode = vm.countryCode,
-                            mobileNumber = vm.mobileNumber,
-                            isError = vm.isMobileNumberError,
-                            onCountryCodeClicked = vm::onCountryCodeSelected,
-                            mobileNumberChanged = vm::onMobileNumberChanged,
-                            onSendOtpClicked = {
-                                vm.onSendOtpClicked(auth)
-                            },
-                            navigateBack = {
-                                navController.navigateUp()
-                            }
-                        )
-                    },
-                    navController = navController,
-                    navChannel = vm.navChannel
-                )
+                vm.onSendOtpClicked(auth)
 
-                val context = LocalContext.current
-                FlowObserver(flow = vm.showToast) {
-                    if (it != null) {
-                        showToastMessage(it, context)
-                    }
-                }
-            }
-            composable(
-                route = Route.SignUpOtpScreen.route + "/{$MOBILE_NUMBER}",
-                arguments = listOf(navArgument(MOBILE_NUMBER) {
-                    type = NavType.StringType
-                    nullable = true
-                })
-            ) {
-                val vm: SignUpViewModel = hiltViewModel()
                 BaseComposable(
                     composable = {
                         OtpVerificationScreen(
@@ -217,14 +224,17 @@ fun NavGraph(
                 val context = LocalContext.current
 
                 val list by vm.userList.collectAsStateWithLifecycle(initialValue = listOf())
+                val name by vm.name.collectAsStateWithLifecycle(initialValue = "")
 
                 BaseComposable(
                     composable = {
-                        HomeScreen(list,vm::logout)
+                        HomeScreen(name, list, vm::logout)
                     },
                     navController = navController,
                     navChannel = vm.navChannel
                 )
+
+                vm.getNames()
 
                 FlowObserver(flow = vm.showToast) {
                     if (it != null) {

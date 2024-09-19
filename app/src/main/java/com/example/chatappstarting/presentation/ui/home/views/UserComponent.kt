@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,8 +33,7 @@ fun UserComponent(
                 color = if (isOnline)
                     colorResource(id = R.color.app_main)
                 else
-                    colorResource(id = R.color.gray_light),
-                shape = RoundedCornerShape(12.dp)
+                    colorResource(id = R.color.gray_light)
             )
     ) {
         Box(
@@ -57,32 +55,29 @@ fun UserComponent(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterEnd)
+                ) {
+                    Text(
+                        text = "call", modifier = Modifier
+                            .padding(20.dp)
+                            .clickable {
+                                onCall()
+                            }
 
-                        Text(
-                            text = "call", modifier = Modifier
-                                .padding(20.dp)
-                                .clickable {
-                                    onCall()
-                                }
+                    )
 
-                        )
+                    Spacer(modifier = Modifier.width(16.dp))
 
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Text(
-                            text = "txt", modifier = Modifier
-                                .padding(20.dp)
-                                .clickable {
-                                    onTxt()
-                                }
-                        )
-                    }
+                    Text(
+                        text = "txt", modifier = Modifier
+                            .padding(20.dp)
+                            .clickable {
+                                onTxt()
+                            }
+                    )
                 }
             }
     }

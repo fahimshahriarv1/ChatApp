@@ -11,4 +11,8 @@ interface LocalUserManger {
     suspend fun saveConnectedList(list: List<String>)
     fun getConnectedList(): Flow<List<String>>
     suspend fun clearPreferences()
+    suspend fun getUserName(): Flow<String>
+    suspend fun getUserNameOnly(): Flow<String>
+    suspend fun setUserNameOnly(name: String)
+    suspend fun setUserName(uName: String)
 }
