@@ -194,7 +194,7 @@ fun NavGraph(
 
                 BaseComposable(
                     composable = {
-                        HomeScreen(name, list, vm.loaderState.value, vm::logout)
+                        HomeScreen(name, list, vm.loaderState.value, vm::onLogout)
                     },
                     navController = navController,
                     navChannel = vm.navChannel
