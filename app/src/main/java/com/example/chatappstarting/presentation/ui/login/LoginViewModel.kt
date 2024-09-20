@@ -49,14 +49,14 @@ class LoginViewModel @Inject constructor(
     private fun checkPwd(user: UserInformation) {
         if (user.password == pass.value) {
             viewModelScope.launch {
-                saveTokenUseCase.saveToken(user.userName)
+                saveTokenUseCase.saveToken(user.token)
                 saveMobileUseCase.saveMobileNumber(uname.value)
                 saveConnectedUsersUseCase.saveConnectedList(user.usersConnected)
                 setNameUseCase.saveName(user.name)
                 setUserNameUseCase.saveUserName(user.userName)
                 navigateTo(Route.HomeScreen.route, isSingleTop = true)
+                loaderState.value = false
             }
-            loaderState.value = false
         } else {
             loaderState.value = false
             showToast("Unam or pass invalid")
@@ -64,6 +64,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun onUserNotFound() {
+        loaderState.value = false
         showToast("no user found")
     }
 }
