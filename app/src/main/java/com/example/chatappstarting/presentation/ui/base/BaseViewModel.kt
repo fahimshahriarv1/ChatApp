@@ -64,7 +64,7 @@ open class BaseViewModel @Inject constructor() :
         }
     }
 
-    fun logout() {
+    protected fun logout() {
         viewModelScope.launch {
             logoutUseCase.logout()
             navigateTo(Route.LoginScreen.route, isSingleTop = true)
