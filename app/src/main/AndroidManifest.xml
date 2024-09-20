@@ -2,13 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission
+        android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".LetsChatApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/chat_big"
         android:label="@string/app_name"
@@ -16,13 +28,12 @@
         android:supportsRtl="true"
         android:theme="@style/App.Starting.Theme"
         android:usesCleartextTraffic="true"
-        android:enableOnBackInvokedCallback="true"
         tools:targetApi="34">
         <activity
-            android:theme="@style/App.Starting.Theme"
             android:name=".presentation.ui.splashScreen.SplashActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/App.Starting.Theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,20 +43,22 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/App.Starting.Theme">
-        </activity>
+            android:theme="@style/App.Starting.Theme" />
         <activity
             android:name=".presentation.ui.login.LoginActivity"
-            android:theme="@style/Theme.ChatAppStarting"
             android:clearTaskOnLaunch="true"
-            android:launchMode="singleTop">
-        </activity>
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ChatAppStarting" />
         <activity
             android:name=".presentation.ui.home.HomeActivity"
-            android:theme="@style/Theme.ChatAppStarting"
             android:clearTaskOnLaunch="true"
-            android:launchMode="singleTop">
-        </activity>
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ChatAppStarting" />
+
+        <service
+            android:name=".service.ServiceMain"
+            android:foregroundServiceType="shortService">
+        </service>
     </application>
 
 </manifest>

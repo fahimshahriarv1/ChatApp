@@ -135,4 +135,7 @@ dependencies {
 
     //gson
     implementation ("com.google.code.gson:gson:2.11.0")
+
+    //jwt
+    implementation("io.jsonwebtoken:jjwt:0.7.0")
 }
