@@ -1,12 +1,18 @@
 package com.example.chatappstarting.data.firebase
 
 import android.util.Log
+import com.example.chatappstarting.constants.LOGIN_TOKEN
+import com.example.chatappstarting.constants.USERS_CONNECTED
 import com.example.chatappstarting.data.room.model.UserInfo
 import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
 import com.example.chatappstarting.presentation.utils.mapInfo
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.gson.Gson
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
+import java.util.Date
 import javax.inject.Inject
 
 class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
@@ -32,7 +38,14 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
                     onUserNotExist()
                 else {
                     val info = Gson().fromJson(Gson().toJson(data), UserInfo::class.java)
-                    onSendPassword(info.mapInfo())
+                    val token = generateToken(info.user_name, info.password)
+                    setLoginToken(
+                        info.user_name,
+                        token,
+                        onSuccess = {
+                            onSendPassword(info.mapInfo().copy(token = token))
+                        }
+                    )
                 }
             }
     }
@@ -72,6 +85,15 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
         }
     }
 
+    fun observeLoginStatus(uname: String, currentToken: String, listener: (Boolean) -> Unit = {}) {
+        val docRef = db.collection("letsChatDbMain").document(uname)
+
+        docRef.addSnapshotListener { value, _ ->
+            val info = gson.fromJson(gson.toJson(value?.data), UserInfo::class.java)
+            listener(info.token == currentToken)
+        }
+    }
+
     fun addConnection(
         uname: String,
         user: List<String>,
@@ -81,7 +103,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
         val docRef = db.collection("letsChatDbMain")
 
         docRef.document(uname)
-            .set(ConnectedList(user))
+            .set(ConnectedList(user), SetOptions.mergeFields(USERS_CONNECTED))
             .addOnSuccessListener {
                 onSuccess()
             }
@@ -101,7 +123,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
                         StatusEnum.ONLINE -> "online"
                         else -> "offline"
                     }
-                )
+                ), SetOptions.mergeFields("status")
             )
             .addOnSuccessListener {
             }
@@ -109,6 +131,36 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
                 setStatus(uname, status)
             }
     }
+
+    private fun setLoginToken(uname: String, token: String, onSuccess: () -> Unit = {}) {
+        val docRef = db.collection("letsChatDbMain")
+
+        docRef.document(uname)
+            .set(
+                mapOf(
+                    LOGIN_TOKEN to token
+                ), SetOptions.mergeFields(LOGIN_TOKEN)
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                setLoginToken(uname, token, onSuccess)
+            }
+    }
+}
+
+fun generateToken(uname: String, pass: String): String {
+    val jwt: String =
+        Jwts.builder()
+            .claim("user_name", uname)
+            .claim("pass", pass.substring(0, 2) + "****")
+            .claim("time", Date().time)
+            .signWith(SignatureAlgorithm.HS256, "secret".toByteArray())
+            .compact()
+    Log.v("JWT token : - ", jwt)
+
+    return jwt
 }
 
 private data class ConnectedList(val users_connected: List<String>)

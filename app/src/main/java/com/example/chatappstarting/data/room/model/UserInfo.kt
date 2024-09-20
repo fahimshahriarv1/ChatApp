@@ -7,5 +7,6 @@ data class UserInfo(
     val status: String = "",
     val name: String = "",
     val user_name: String = "",
-    val users_connected: List<String> = listOf()
+    val users_connected: List<String> = listOf(),
+    val token: String = ""
 )

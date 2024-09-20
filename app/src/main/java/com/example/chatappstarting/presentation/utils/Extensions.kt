@@ -21,6 +21,7 @@ fun UserInfo.mapInfo(): UserInformation {
         status = when (this.status) {
             "online" -> StatusEnum.ONLINE
             else -> StatusEnum.OFFLINE
-        }
+        },
+        token = this.token
     )
 }
