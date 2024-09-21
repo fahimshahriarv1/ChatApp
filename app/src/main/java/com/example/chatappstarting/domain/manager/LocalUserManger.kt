@@ -1,5 +1,6 @@
 package com.example.chatappstarting.domain.manager
 
+import com.example.chatappstarting.data.room.model.UserInformation
 import kotlinx.coroutines.flow.Flow
 
 interface LocalUserManger {
@@ -15,4 +16,5 @@ interface LocalUserManger {
     suspend fun getUserNameOnly(): Flow<String>
     suspend fun setUserNameOnly(name: String)
     suspend fun setUserName(uName: String)
+    fun getUserInfo(): Flow<UserInformation>
 }

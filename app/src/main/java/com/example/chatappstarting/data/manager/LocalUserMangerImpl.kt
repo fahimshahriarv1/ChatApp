@@ -15,6 +15,7 @@ import com.example.chatappstarting.constants.REFRESH_TOKEN
 import com.example.chatappstarting.constants.TOKEN
 import com.example.chatappstarting.constants.USER_LIST
 import com.example.chatappstarting.constants.USER_NAME
+import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.domain.manager.LocalUserManger
 import com.example.chatappstarting.presentation.utils.emptyIfNull
 import kotlinx.coroutines.flow.Flow
@@ -90,6 +91,21 @@ class LocalUserMangerImpl(private val context: Context) : LocalUserManger {
     override fun getUserToken(): Flow<String> {
         return context.dataStore.data.map {
             it[PreferencesKeys.token].emptyIfNull()
+        }
+    }
+
+    override fun getUserInfo(): Flow<UserInformation> {
+        return context.dataStore.data.map {
+            UserInformation(
+                token = it[PreferencesKeys.token].emptyIfNull(),
+                password = "",
+                userName = it[PreferencesKeys.userName].emptyIfNull(),
+                name = it[PreferencesKeys.name].emptyIfNull(),
+                usersConnected = if (it[PreferencesKeys.users]?.contains(",") == true)
+                    it[PreferencesKeys.users]?.split(",") ?: emptyList()
+                else
+                    listOf(it[PreferencesKeys.users] ?: "")
+            )
         }
     }
 
