@@ -2,6 +2,7 @@ package com.example.chatappstarting.domain.di
 
 import android.app.Application
 import android.content.Context
+import com.example.chatappstarting.data.room.LocalDatabase
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.AppNavigatorImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -9,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -30,4 +32,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseFireBaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideLocalDatabase(@ApplicationContext context: Context): LocalDatabase =
+        LocalDatabase.create(context)
 }

@@ -1,7 +1,10 @@
 package com.example.chatappstarting.domain.di
 
 import android.app.Application
+import com.example.chatappstarting.data.manager.LocalDataBaseMangerImpl
 import com.example.chatappstarting.data.manager.LocalUserMangerImpl
+import com.example.chatappstarting.data.room.LocalDatabase
+import com.example.chatappstarting.domain.manager.LocalDataBaseManger
 import com.example.chatappstarting.domain.manager.LocalUserManger
 import com.example.chatappstarting.domain.usecases.GetTokenUseCase
 import com.example.chatappstarting.domain.usecases.GetUserLoggedInStateUseCase
@@ -21,6 +24,11 @@ object DataModule {
     @Singleton
     fun provideLocalUserManger(application: Application): LocalUserManger =
         LocalUserMangerImpl(application)
+
+    @Provides
+    @Singleton
+    fun provideLocalDatabaseManger(db: LocalDatabase): LocalDataBaseManger =
+        LocalDataBaseMangerImpl(db)
 
     @Provides
     @Singleton

@@ -9,8 +9,6 @@ interface LocalUserManger {
     suspend fun saveUserToken(token: String)
     suspend fun removeLoggedInState()
     suspend fun saveMobileNumber(number: String)
-    suspend fun saveConnectedList(list: List<String>)
-    fun getConnectedList(): Flow<List<String>>
     suspend fun clearPreferences()
     suspend fun getUserName(): Flow<String>
     suspend fun getUserNameOnly(): Flow<String>
