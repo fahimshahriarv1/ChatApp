@@ -16,6 +16,8 @@ import androidx.navigation.navArgument
 import com.example.chatappstarting.constants.MOBILE_NUMBER
 import com.example.chatappstarting.data.room.model.Argument
 import com.example.chatappstarting.presentation.ui.base.BaseComposable
+import com.example.chatappstarting.presentation.ui.base.BaseComposableWithLifeCycle
+import com.example.chatappstarting.presentation.ui.base.ComposableLifeCycleImpl
 import com.example.chatappstarting.presentation.ui.base.FlowObserver
 import com.example.chatappstarting.presentation.ui.home.HomeViewModel
 import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
@@ -173,6 +175,7 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
+
                 FlowObserver(flow = vm.showToast) {
                     if (it != null) {
                         showToastMessage(it, context)
@@ -192,12 +195,29 @@ fun NavGraph(
                 val list by vm.userList.collectAsStateWithLifecycle(initialValue = listOf())
                 val name by vm.name.collectAsStateWithLifecycle(initialValue = "")
 
-                BaseComposable(
+                BaseComposableWithLifeCycle(
                     composable = {
-                        HomeScreen(name, list, vm.loaderState.value, vm::onLogout)
+                        HomeScreen(
+                            name = name,
+                            list = list,
+                            isLoading = vm.loaderState.value,
+                            addUserText = vm.userAddText,
+                            onLogoutClicked = vm::onLogout,
+                            onAdduserClicked = vm::onAdduserClicked
+                        )
                     },
                     navController = navController,
-                    navChannel = vm.navChannel
+                    navChannel = vm.navChannel,
+                    composeLifeCycleImpl = {
+                        ComposableLifeCycleImpl(
+                            onPause = {
+                                vm.removeListeners()
+                            },
+                            onResume = {
+                                vm.startListeners()
+                            }
+                        )
+                    }
                 )
 
                 vm.getNames()
