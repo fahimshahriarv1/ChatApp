@@ -8,6 +8,7 @@ import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
 import com.example.chatappstarting.presentation.utils.mapInfo
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import com.google.gson.Gson
 import io.jsonwebtoken.Jwts
@@ -15,20 +16,22 @@ import io.jsonwebtoken.SignatureAlgorithm
 import java.util.Date
 import javax.inject.Inject
 
-class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
+class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
 
     private val TAG = "Firebase Client"
 
     private val gson = Gson()
+    private val dbRef = db.collection("letsChatDbMain")
+    private lateinit var connectionListener: ListenerRegistration
+    private lateinit var tokenStatusListener: ListenerRegistration
 
     fun login(
         uname: String,
         onSendPassword: (UserInformation) -> Unit = {},
         onUserNotExist: () -> Unit = {}
     ) {
-        val docRef = db.collection("letsChatDbMain").document(uname)
-
-        docRef.get()
+        dbRef.document(uname)
+            .get()
             .addOnSuccessListener {
                 val data = it.data
 
@@ -58,9 +61,8 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             status = "online",
             users_connected = listOf("")
         )
-        val docRef = db.collection("letsChatDbMain")
 
-        docRef.document(mobile)
+        dbRef.document(mobile)
             .set(user)
             .addOnSuccessListener {
                 onSuccess()
@@ -71,27 +73,34 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
     }
 
     fun observeUserStatus(listener: (List<UserInformation>?) -> Unit = {}) {
-        val docRef = db.collection("letsChatDbMain")
-
         var list: List<UserInfo>?
-        docRef.addSnapshotListener { value, _ ->
-            list = value?.documents?.map {
-                Log.d(TAG, it.toString())
-                gson.fromJson(gson.toJson(it.data), UserInfo::class.java)
+        Log.d("listening", "connections listening started")
+        connectionListener =
+            dbRef.addSnapshotListener { value, _ ->
+                Log.d("listening", "connections")
+                list = value?.documents?.map {
+                    Log.d(TAG, it.toString())
+                    gson.fromJson(gson.toJson(it.data), UserInfo::class.java)
+                }
+                listener(
+                    list?.map { it.mapInfo() }
+                )
             }
-            listener(
-                list?.map { it.mapInfo() }
-            )
-        }
     }
 
-    fun observeLoginStatus(uname: String, currentToken: String, listener: (Boolean) -> Unit = {}) {
-        val docRef = db.collection("letsChatDbMain").document(uname)
-
-        docRef.addSnapshotListener { value, _ ->
-            val info = gson.fromJson(gson.toJson(value?.data), UserInfo::class.java)
-            listener(info.token == currentToken)
-        }
+    fun observeLoginStatus(
+        uname: String,
+        currentToken: String,
+        listener: (Boolean) -> Unit = {}
+    ) {
+        Log.d("listening", "starting token observe")
+        tokenStatusListener =
+            dbRef.document(uname)
+                .addSnapshotListener { value, _ ->
+                    Log.d("listening", "loginState")
+                    val info = gson.fromJson(gson.toJson(value?.data), UserInfo::class.java)
+                    listener(info.token == currentToken)
+                }
     }
 
     fun addConnection(
@@ -100,9 +109,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     ) {
-        val docRef = db.collection("letsChatDbMain")
-
-        docRef.document(uname)
+        dbRef.document(uname)
             .set(ConnectedList(user), SetOptions.mergeFields(USERS_CONNECTED))
             .addOnSuccessListener {
                 onSuccess()
@@ -114,9 +121,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
     }
 
     fun setStatus(uname: String, status: StatusEnum = StatusEnum.NONE) {
-        val docRef = db.collection("letsChatDbMain")
-
-        docRef.document(uname)
+        dbRef.document(uname)
             .set(
                 mapOf(
                     "status" to when (status) {
@@ -133,9 +138,7 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
     }
 
     private fun setLoginToken(uname: String, token: String, onSuccess: () -> Unit = {}) {
-        val docRef = db.collection("letsChatDbMain")
-
-        docRef.document(uname)
+        dbRef.document(uname)
             .set(
                 mapOf(
                     LOGIN_TOKEN to token
@@ -146,6 +149,32 @@ class FireBaseClient @Inject constructor(private val db: FirebaseFirestore) {
             }
             .addOnFailureListener {
                 setLoginToken(uname, token, onSuccess)
+            }
+    }
+
+    fun removeListeners() {
+        if (::connectionListener.isInitialized)
+            connectionListener.remove()
+        if (::tokenStatusListener.isInitialized)
+            tokenStatusListener.remove()
+    }
+
+    fun checkUserExistence(
+        uname: String,
+        existOrNot: (Boolean) -> Unit = {},
+        onFailed: () -> Unit = {}
+    ) {
+
+        dbRef.document(uname)
+            .get()
+            .addOnSuccessListener {
+                if (it.data.isNullOrEmpty())
+                    existOrNot(false)
+                else
+                    existOrNot(true)
+            }
+            .addOnFailureListener {
+                onFailed()
             }
     }
 }

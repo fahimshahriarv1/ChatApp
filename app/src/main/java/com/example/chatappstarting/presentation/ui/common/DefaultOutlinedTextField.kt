@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chatappstarting.R
@@ -39,10 +40,8 @@ fun DefaultOutlinedTextField(
         unfocusedBorderColor = colorResource(id = R.color.gray_light)
     ),
     singleLine: Boolean = true,
-    textStyle: TextStyle = TextStyle(
-        fontSize = 24.sp,
-        textAlign = TextAlign.Start
-    ),
+    fonSize: TextUnit = 24.sp,
+    textAlign: TextAlign = TextAlign.Start,
     keyboardOptions: KeyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next
@@ -54,7 +53,10 @@ fun DefaultOutlinedTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        textStyle = textStyle,
+        textStyle = TextStyle(
+            fontSize = fonSize,
+            textAlign = textAlign
+        ),
         keyboardOptions = keyboardOptions,
         colors = colors,
         shape = shape,
