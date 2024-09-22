@@ -7,6 +7,6 @@ data class UserInformation(
     val status: StatusEnum = StatusEnum.NONE,
     val name: String = "",
     val userName: String = "",
-    val usersConnected: List<String> = listOf(),
+    var usersConnected: List<String> = listOf(),
     val token: String = ""
 )

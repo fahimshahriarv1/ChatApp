@@ -85,10 +85,7 @@ class LocalUserMangerImpl(private val context: Context) : LocalUserManger {
                 password = "",
                 userName = it[PreferencesKeys.userName].emptyIfNull(),
                 name = it[PreferencesKeys.name].emptyIfNull(),
-                usersConnected = if (it[PreferencesKeys.users]?.contains(",") == true)
-                    it[PreferencesKeys.users]?.split(",") ?: emptyList()
-                else
-                    listOf(it[PreferencesKeys.users] ?: "")
+                usersConnected = listOf()
             )
         }
     }
