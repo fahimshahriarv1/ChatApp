@@ -18,4 +18,5 @@
     <string name="password_mismatched">Password mismatched</string>
     <string name="password_cannot_be_empty">Password cannot be empty</string>
     <string name="go_back">Go Back</string>
+    <string name="add_user">Add User</string>
 </resources>

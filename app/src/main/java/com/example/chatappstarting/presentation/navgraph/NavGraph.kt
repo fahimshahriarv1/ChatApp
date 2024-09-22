@@ -2,9 +2,10 @@ package com.example.chatappstarting.presentation.navgraph
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,7 +16,9 @@ import androidx.navigation.navArgument
 import com.example.chatappstarting.constants.MOBILE_NUMBER
 import com.example.chatappstarting.data.room.model.Argument
 import com.example.chatappstarting.presentation.ui.base.BaseComposable
-import com.example.chatappstarting.presentation.ui.utils.showToastMessage
+import com.example.chatappstarting.presentation.ui.base.BaseComposableWithLifeCycle
+import com.example.chatappstarting.presentation.ui.base.ComposableLifeCycleImpl
+import com.example.chatappstarting.presentation.ui.base.FlowObserver
 import com.example.chatappstarting.presentation.ui.home.HomeViewModel
 import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
 import com.example.chatappstarting.presentation.ui.login.LoginViewModel
@@ -24,13 +27,7 @@ import com.example.chatappstarting.presentation.ui.signup.MobileNumberScreen
 import com.example.chatappstarting.presentation.ui.signup.OtpVerificationScreen
 import com.example.chatappstarting.presentation.ui.signup.PasswordScreen
 import com.example.chatappstarting.presentation.ui.signup.SignUpViewModel
-import com.google.firebase.FirebaseException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.auth.UserInfo
-import kotlinx.coroutines.flow.collectLatest
-import java.util.concurrent.TimeUnit
+import com.example.chatappstarting.presentation.ui.utils.showToastMessage
 
 @Composable
 fun NavGraph(
@@ -55,23 +52,22 @@ fun NavGraph(
                             uname = vm.uname,
                             pass = vm.pass,
                             isError = vm.isError,
+                            isLoading = vm.loaderState.value,
                             unameChanged = vm::onUnameChanged,
                             passChanged = vm::onPassChanged,
                             onLoginClicked = vm::onLoginClicked,
-                            onSignUoClicked = vm::onSignUoClicked
+                            onSignUpClicked = vm::onSignUpClicked
                         )
                     },
                     navController = navController,
                     navChannel = vm.navChannel
                 )
 
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collect {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
         }
 
@@ -91,35 +87,6 @@ fun NavGraph(
                 )
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
-                val auth = PhoneAuthOptions.newBuilder(vm.firebaseAuth)
-                    .setPhoneNumber(vm.countryCode.value + vm.mobileNumber.value)
-                    .setTimeout(60, TimeUnit.SECONDS)
-                    .setActivity(LocalContext.current as Activity)
-                    .setCallbacks(
-                        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                                //onSendOtpClicked()
-                                vm.showToast("Verification Success")
-                            }
-
-                            override fun onVerificationFailed(p0: FirebaseException) {
-                                vm.showToast("Unable to verify")
-                                p0.printStackTrace()
-                            }
-
-                            override fun onCodeSent(
-                                p0: String,
-                                p1: PhoneAuthProvider.ForceResendingToken
-                            ) {
-                                super.onCodeSent(p0, p1)
-                                vm.verificationCode = p0
-                                vm.resendToken = p1
-                                vm.isResend = true
-                                vm.showToast("Otp sent")
-                            }
-                        }
-                    )
-
                 BaseComposable(
                     composable = {
                         MobileNumberScreen(
@@ -129,7 +96,7 @@ fun NavGraph(
                             onCountryCodeClicked = vm::onCountryCodeSelected,
                             mobileNumberChanged = vm::onMobileNumberChanged,
                             onSendOtpClicked = {
-                                vm.onSendOtpClicked(auth)
+                                navController.navigate(Route.SignUpOtpScreen(mobileNumber = vm.mobileNumber.value))
                             },
                             navigateBack = {
                                 navController.navigateUp()
@@ -141,14 +108,13 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collect {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
+
             composable(
                 route = Route.SignUpOtpScreen.route + "/{$MOBILE_NUMBER}",
                 arguments = listOf(navArgument(MOBILE_NUMBER) {
@@ -157,13 +123,17 @@ fun NavGraph(
                 })
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
+
+                vm.onSendOtpClicked(LocalContext.current as Activity)
+
                 BaseComposable(
                     composable = {
                         OtpVerificationScreen(
                             otp = vm.otp,
+                            isLoading = vm.loaderState.value,
                             onOtpValueChanged = vm::onOtpChanged,
                             navigateBack = { navController.navigateUp() },
-                            onOkClicked = vm::onOtpOkClicked
+                            onOkClicked = vm::verifyOtp
                         )
                     },
                     navController = navController,
@@ -171,13 +141,11 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collect {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
 
             composable(
@@ -188,12 +156,14 @@ fun NavGraph(
                 })
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
+
                 BaseComposable(
                     composable = {
                         PasswordScreen(
                             passwordValue = vm.password,
                             reEnterPasswordValue = vm.reEnterPassword,
                             isPasswordMatched = vm.isPasswordMatched,
+                            isLoading = vm.loaderState.value,
                             onPasswordValueChanged = vm::onPasswordChanged,
                             onReEnterPasswordValueChanged = vm::onReEnterPasswordChanged,
                             onOkClicked = vm::onPasswordOkClicked,
@@ -205,13 +175,12 @@ fun NavGraph(
                 )
 
                 val context = LocalContext.current
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collectLatest {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
         }
 
@@ -222,21 +191,42 @@ fun NavGraph(
             composable(route = Route.HomeScreen.route) {
                 val vm: HomeViewModel = hiltViewModel()
                 val context = LocalContext.current
-                BaseComposable(
+
+                val list by vm.userList.collectAsStateWithLifecycle(initialValue = listOf())
+                val name by vm.name.collectAsStateWithLifecycle(initialValue = "")
+
+                BaseComposableWithLifeCycle(
                     composable = {
-                        HomeScreen()
+                        HomeScreen(
+                            name = name,
+                            list = list,
+                            isLoading = vm.loaderState.value,
+                            addUserText = vm.userAddText,
+                            onLogoutClicked = vm::onLogout,
+                            onAdduserClicked = vm::onAdduserClicked
+                        )
                     },
                     navController = navController,
-                    navChannel = vm.navChannel
+                    navChannel = vm.navChannel,
+                    composeLifeCycleImpl = {
+                        ComposableLifeCycleImpl(
+                            onPause = {
+                                vm.removeListeners()
+                            },
+                            onResume = {
+                                vm.startListeners()
+                            }
+                        )
+                    }
                 )
 
-                LaunchedEffect(key1 = true, block = {
-                    vm.showToast.collectLatest {
-                        if (!it.isNullOrEmpty()) {
-                            showToastMessage(it, context)
-                        }
+                vm.getNames()
+
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
                     }
-                })
+                }
             }
         }
     }

@@ -9,9 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -35,6 +35,7 @@ import com.example.chatappstarting.presentation.ui.common.DefaultNavIconAppAuth
 @Composable
 fun OtpVerificationScreen(
     otp: State<String> = mutableStateOf(""),
+    isLoading:Boolean = false,
     onOtpValueChanged: (String) -> Unit = {},
     onOkClicked: () -> Unit = {},
     navigateBack: () -> Unit = {}
@@ -66,7 +67,7 @@ fun OtpVerificationScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = colorResource(id = R.color.app_main),
                     errorBorderColor = colorResource(id = R.color.error),
                     unfocusedBorderColor = colorResource(id = R.color.gray_light)
@@ -88,6 +89,7 @@ fun OtpVerificationScreen(
             DefaultButton(
                 oncClick = onOkClicked,
                 buttonTxt = stringResource(id = R.string.ok),
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth(DEFAULT_WIDTH_PERCENT)
                     .align(Alignment.BottomCenter)

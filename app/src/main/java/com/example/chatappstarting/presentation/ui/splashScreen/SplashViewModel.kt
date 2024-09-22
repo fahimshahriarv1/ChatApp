@@ -3,7 +3,6 @@ package com.example.chatappstarting.presentation.ui.splashScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.chatappstarting.domain.usecases.data.LocalUserLogin
-import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val localUserLogin: LocalUserLogin, appNavigator: AppNavigator
-) : BaseViewModel(appNavigator) {
+    private val localUserLogin: LocalUserLogin
+) : BaseViewModel() {
     val startDest = mutableStateOf("")
 
     init {

@@ -58,6 +58,7 @@ fun PasswordScreen(
     passwordValue: State<String> = mutableStateOf(""),
     reEnterPasswordValue: State<String> = mutableStateOf(""),
     isPasswordMatched: State<Boolean> = mutableStateOf(true),
+    isLoading: Boolean = false,
     onPasswordValueChanged: (String) -> Unit = {},
     onReEnterPasswordValueChanged: (String) -> Unit = {},
     onOkClicked: () -> Unit = {},
@@ -191,7 +192,7 @@ fun PasswordScreen(
                     onOkClicked()
                     showWarningText.value = true
                 },
-                enabled = isPasswordMatched.value,
+                enabled = isPasswordMatched.value && !isLoading,
                 modifier = Modifier
                     .fillMaxWidth(DEFAULT_WIDTH_PERCENT)
                     .align(Alignment.BottomCenter)

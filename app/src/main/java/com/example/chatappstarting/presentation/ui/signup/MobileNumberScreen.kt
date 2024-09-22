@@ -23,10 +23,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -78,7 +79,7 @@ fun MobileNumberScreen(
             TopAppBar(
                 title = {
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colorResource(id = R.color.white)
                 ),
                 navigationIcon = {
@@ -130,17 +131,19 @@ fun MobileNumberScreen(
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
                                     .padding(top = 4.dp)
                                     .fillMaxWidth()
-                                    .menuAnchor()
+                                    .menuAnchor(MenuAnchorType.PrimaryEditable, true)
                                     .clickable(
-                                        interactionSource = MutableInteractionSource(),
+                                        interactionSource = remember {
+                                            MutableInteractionSource()
+                                        },
                                         indication = null
                                     ) {
                                         expanded = true
-                                    }
+                                    },
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
                                     text = countryCode.value,
@@ -205,7 +208,7 @@ fun MobileNumberScreen(
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number
                             ),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                            colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = colorResource(id = R.color.app_main),
                                 errorBorderColor = colorResource(id = R.color.error),
                                 unfocusedBorderColor = colorResource(id = R.color.gray_light)

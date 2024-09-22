@@ -3,6 +3,7 @@ package com.example.chatappstarting.presentation.ui.base
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatappstarting.domain.usecases.LogoutUseCase
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,9 +15,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class BaseViewModel @Inject constructor(protected val appNavigator: AppNavigator) :
+open class BaseViewModel @Inject constructor() :
     ViewModel() {
-    val navChannel = appNavigator.navigationChannel
+    @Inject
+    lateinit var appNavigator: AppNavigator
+
+    @Inject
+    lateinit var logoutUseCase: LogoutUseCase
+
+    val navChannel by lazy { appNavigator.navigationChannel }
     val loaderState = mutableStateOf(false)
 
     private val _showToast = MutableSharedFlow<String?>()
@@ -54,6 +61,13 @@ open class BaseViewModel @Inject constructor(protected val appNavigator: AppNavi
                 inclusive,
                 isSingleTop
             )
+        }
+    }
+
+    protected fun logout() {
+        viewModelScope.launch {
+            logoutUseCase.logout()
+            navigateTo(Route.LoginScreen.route, isSingleTop = true)
         }
     }
 }
