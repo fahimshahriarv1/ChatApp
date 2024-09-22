@@ -1,10 +1,12 @@
 package com.example.chatappstarting.domain.usecases
 
-import com.example.chatappstarting.domain.manager.LocalUserManger
+import com.example.chatappstarting.domain.manager.LocalDataBaseManger
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class SaveConnectedUsersUseCase @Inject constructor(private val localUserManger: LocalUserManger) {
-    suspend fun saveConnectedList(list: List<String>) {
-        localUserManger.saveConnectedList(list)
-    }
+class SaveConnectedUsersUseCase @Inject constructor(private val localDataBaseManger: LocalDataBaseManger) {
+    suspend fun saveConnectedList(uName: String, list: List<String>) =
+        useCaseHandler(Dispatchers.IO) {
+            localDataBaseManger.saveConnectedList(uName, list)
+        }
 }
