@@ -74,7 +74,7 @@ class SignUpViewModel @Inject constructor(
 
                     override fun onCodeSent(
                         p0: String,
-                        p1: PhoneAuthProvider.ForceResendingToken
+                        p1: ForceResendingToken
                     ) {
                         super.onCodeSent(p0, p1)
                         loaderState.value = false
@@ -168,11 +168,6 @@ class SignUpViewModel @Inject constructor(
                 showToast("Something went wrong")
             }
         )
-    }
-
-    fun onMobileNumberInputCorrect() {
-        if (mobileNumber.value.isPhoneNumberValid())
-            navigateTo(Route.SignUpOtpScreen(mobileNumber = _mobileNumber.value))
     }
 
     private fun onOtpVerified() {
