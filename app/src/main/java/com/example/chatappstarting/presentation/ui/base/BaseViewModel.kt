@@ -3,6 +3,7 @@ package com.example.chatappstarting.presentation.ui.base
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatappstarting.data.firebase.FireBaseClient
 import com.example.chatappstarting.domain.usecases.LogoutUseCase
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.Route
@@ -22,6 +23,9 @@ open class BaseViewModel @Inject constructor() :
 
     @Inject
     lateinit var logoutUseCase: LogoutUseCase
+
+    @Inject
+    lateinit var fireBaseClient: FireBaseClient
 
     val navChannel by lazy { appNavigator.navigationChannel }
     val loaderState = mutableStateOf(false)
@@ -64,10 +68,18 @@ open class BaseViewModel @Inject constructor() :
         }
     }
 
-    protected fun logout() {
+    protected fun logout(onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
-            logoutUseCase.logout()
-            navigateTo(Route.LoginScreen.route, isSingleTop = true)
+            fireBaseClient.removeListeners()
+            logoutUseCase.logout().collect {
+                it.onSuccess {
+                    onSuccess()
+                }
+            }
         }
+    }
+
+    fun removeListeners() {
+        fireBaseClient.removeListeners()
     }
 }
