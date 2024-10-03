@@ -29,10 +29,4 @@ class SplashViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
-
-    fun saveLoginState() {
-        viewModelScope.launch {
-            localUserLogin.saveToken.saveToken("loggedIn")
-        }
-    }
 }

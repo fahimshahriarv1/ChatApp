@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.example.chatappstarting.R
 import com.example.chatappstarting.presentation.navgraph.NavGraph
+import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseActivity
 import com.example.chatappstarting.presentation.ui.home.HomeActivity
 import com.example.chatappstarting.presentation.ui.splashScreen.ui.SplashScreen
@@ -22,10 +23,11 @@ class SplashActivity : BaseActivity() {
         hideSystemUI()
         setStatusBarColor(R.color.app_main)
         setContent {
-            if (viewModel.startDest.value.isNotEmpty())
-                NavGraph(startDest = viewModel.startDest.value)
-            else
-                SplashScreen()
+            when (viewModel.startDest.value) {
+                Route.AppMain.route -> gotoHome()
+                Route.AppAuth.route -> NavGraph(startDest = Route.AppAuth.route)
+                else -> SplashScreen()
+            }
         }
     }
 

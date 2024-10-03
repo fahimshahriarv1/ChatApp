@@ -12,7 +12,7 @@ class HomeActivity : BaseActivity() {
         hideToolbar()
         hideSystemUI()
         setContent {
-            NavGraph(startDest = Route.HomeScreen.route)
+            NavGraph(startDest = Route.AppMain.route)
         }
     }
 }
