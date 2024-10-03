@@ -27,8 +27,9 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
 
     fun login(
         uname: String,
-        onSendPassword: (UserInformation) -> Unit = {},
-        onUserNotExist: () -> Unit = {}
+        onSendPassword: (UserInformation, () -> Unit) -> Unit = { _, _ -> },
+        onUserNotExist: () -> Unit = {},
+        onSuccess: () -> Unit = {}
     ) {
         dbRef.document(uname)
             .get()
@@ -46,7 +47,7 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
                         info.user_name,
                         token,
                         onSuccess = {
-                            onSendPassword(info.mapInfo().copy(token = token))
+                            onSendPassword(info.mapInfo().copy(token = token), onSuccess)
                         }
                     )
                 }

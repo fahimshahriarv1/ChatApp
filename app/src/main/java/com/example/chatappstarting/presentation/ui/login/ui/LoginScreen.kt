@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.Button
@@ -32,7 +31,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -170,7 +171,7 @@ fun LoginScreen(
             Button(
                 onClick = onLoginClicked,
                 shape = RoundedCornerShape(8.dp),
-                enabled = !isLoading,
+                enabled = !isLoading && uname.value.isNotEmpty() && pass.value.isNotEmpty(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.app_main)
                 ),
@@ -201,30 +202,26 @@ fun LoginScreen(
 
                 append(" ")
 
-                withStyle(
-                    style = SpanStyle(
-                        color = colorResource(id = R.color.app_main),
-                        fontWeight = FontWeight.SemiBold,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 16.sp
-                    )
-                ) {
-                    pushStringAnnotation(
+                withLink(
+                    link = LinkAnnotation.Clickable(
                         tag = stringResource(id = R.string.sign_up),
-                        annotation = stringResource(id = R.string.sign_up)
-                    )
+                        styles = TextLinkStyles(
+                            SpanStyle(
+                                color = colorResource(id = R.color.app_main),
+                                fontWeight = FontWeight.SemiBold,
+                                fontStyle = FontStyle.Italic,
+                                fontSize = 16.sp
+                            )
+                        )
+                    ) {
+                        onSignUpClicked()
+                    }
+                ) {
                     append(stringResource(id = R.string.sign_up))
                 }
             }
 
-            ClickableText(text = signUp, onClick = {
-                signUp.getStringAnnotations(it, it)
-                    .firstOrNull()?.let { span ->
-                        if (span.tag == "Sign up")
-                            onSignUpClicked()
-                    }
-            }
-            )
+            Text(text = signUp)
         }
     }
 }
