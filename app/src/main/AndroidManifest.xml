@@ -41,15 +41,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/App.Starting.Theme" />
-        <activity
-            android:name=".presentation.ui.login.LoginActivity"
-            android:clearTaskOnLaunch="true"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.ChatAppStarting" />
-        <activity
             android:name=".presentation.ui.home.HomeActivity"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTop"
