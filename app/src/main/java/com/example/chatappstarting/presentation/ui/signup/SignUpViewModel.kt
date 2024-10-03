@@ -56,38 +56,6 @@ class SignUpViewModel @Inject constructor(
     lateinit var resendToken: ForceResendingToken
     var isResend = false
 
-    private val auth by lazy {
-        PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(countryCode.value + mobileNumber.value)
-            .setTimeout(60, TimeUnit.SECONDS)
-            .setCallbacks(
-                object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                    override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                        //onSendOtpClicked()
-                        showToast("Verification Success")
-                    }
-
-                    override fun onVerificationFailed(p0: FirebaseException) {
-                        showToast("Unable to verify")
-                        p0.printStackTrace()
-                    }
-
-                    override fun onCodeSent(
-                        p0: String,
-                        p1: ForceResendingToken
-                    ) {
-                        super.onCodeSent(p0, p1)
-                        loaderState.value = false
-                        Log.d("OTP sent", "$p0 $p1")
-                        verificationID = p0
-                        resendToken = p1
-                        isResend = true
-                        showToast("Otp sent")
-                    }
-                }
-            )
-    }
-
     init {
         showToast("yeppeeeee")
     }
@@ -116,15 +84,19 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onSendOtpClicked(context: Activity) {
+        val auth = getFirebaseAuth()
         auth.setActivity(context)
         loaderState.value = true
         viewModelScope.launch {
             if (isResend)
                 PhoneAuthProvider.verifyPhoneNumber(
-                    auth.setForceResendingToken(resendToken).build()
+                    auth.setForceResendingToken(resendToken)
+                        .build()
                 )
             else
-                PhoneAuthProvider.verifyPhoneNumber(auth.build())
+                PhoneAuthProvider.verifyPhoneNumber(
+                    auth.build()
+                )
         }
     }
 
@@ -137,10 +109,11 @@ class SignUpViewModel @Inject constructor(
         }.addOnFailureListener {
             loaderState.value = false
             showToast("wrong otp")
+            it.printStackTrace()
         }
     }
 
-    fun onPasswordOkClicked() {
+    fun onPasswordOkClicked(onSuccess: () -> Unit = {}) {
         _isPasswordMatched.value =
             _reEnterPassword.value == _password.value && _password.value.isNotEmpty()
 
@@ -156,12 +129,7 @@ class SignUpViewModel @Inject constructor(
                     setNameUseCase.saveName(mobileNumber.value)
                     setUnameUseCase.saveUserName(mobileNumber.value)
                     saveTokenUseCase.saveToken(mobileNumber.value)
-                    navigateTo(
-                        Route.AppMain.fullRoute,
-                        inclusive = true,
-                        popUpToRoute = Route.AppAuth,
-                        isSingleTop = true
-                    )
+                    onSuccess()
                 }
             },
             onFailure = {
@@ -173,4 +141,64 @@ class SignUpViewModel @Inject constructor(
     private fun onOtpVerified() {
         navigateTo(Route.SignUpPasswordScreen(mobileNumber = _mobileNumber.value))
     }
+
+    private fun getFirebaseAuth(): PhoneAuthOptions.Builder {
+        return PhoneAuthOptions.newBuilder(firebaseAuth)
+            .setPhoneNumber(countryCode.value + mobileNumber.value)
+            .setTimeout(120, TimeUnit.SECONDS)
+            .setCallbacks(
+                object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                        //onSendOtpClicked()
+                        showToast("Verification Success")
+                    }
+
+                    override fun onVerificationFailed(p0: FirebaseException) {
+                        showToast("Unable to verify")
+                        p0.printStackTrace()
+                    }
+
+                    override fun onCodeAutoRetrievalTimeOut(p0: String) {
+                        super.onCodeAutoRetrievalTimeOut(p0)
+                        showToast("time out")
+                        viewModelScope.launch {
+                            appNavigator.navigateBack()
+                        }
+                    }
+
+                    override fun onCodeSent(
+                        p0: String,
+                        p1: ForceResendingToken
+                    ) {
+                        super.onCodeSent(p0, p1)
+                        loaderState.value = false
+                        Log.d("OTP sent", "$p0 $p1")
+                        verificationID = p0
+                        resendToken = p1
+                        isResend = true
+                        showToast("Otp sent")
+                    }
+                }
+            )
+    }
+
+    fun checkUserExistOrNot(onSuccess: () -> Unit) {
+        loaderState.value = true
+        client.checkUserExistence(
+            mobileNumber.value,
+            existOrNot = {
+                if (!it)
+                    onSuccess()
+                else
+                    showToast("User Already Exist,Please Login")
+
+                loaderState.value = false
+            },
+            onFailed = {
+                showToast("Something went wrong")
+                loaderState.value = false
+            }
+        )
+    }
 }
+

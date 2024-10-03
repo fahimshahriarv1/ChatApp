@@ -66,6 +66,7 @@ fun MobileNumberScreen(
     mobileNumber: State<String> = mutableStateOf(""),
     countryCode: State<String> = mutableStateOf("+88"),
     isError: State<Boolean> = mutableStateOf(false),
+    isLoading: Boolean = false,
     mobileNumberChanged: (String) -> Unit = {},
     onCountryCodeClicked: (String) -> Unit = {},
     onSendOtpClicked: () -> Unit = {},
@@ -226,7 +227,7 @@ fun MobileNumberScreen(
                 Button(
                     onClick = onSendOtpClicked,
                     shape = RoundedCornerShape(8.dp),
-                    enabled = !isError.value,
+                    enabled = !isError.value && !isLoading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.app_main)
                     ),
@@ -236,7 +237,7 @@ fun MobileNumberScreen(
                         .align(alignment = Alignment.BottomCenter)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.sent_otp),
+                        text = stringResource(id = R.string.send_otp),
                         color = colorResource(id = R.color.white),
                         modifier = Modifier
                             .padding(vertical = 8.dp)

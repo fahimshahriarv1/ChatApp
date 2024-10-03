@@ -2,7 +2,6 @@ package com.example.chatappstarting.presentation.ui.login
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.example.chatappstarting.data.firebase.FireBaseClient
 import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.domain.usecases.SaveConnectedUsersUseCase
 import com.example.chatappstarting.domain.usecases.SaveMobileUseCase
@@ -12,12 +11,12 @@ import com.example.chatappstarting.domain.usecases.SaveUserNameUseCase
 import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val fireBaseClient: FireBaseClient,
     private val saveMobileUseCase: SaveMobileUseCase,
     private val saveTokenUseCase: SaveTokenUseCase,
     private val saveConnectedUsersUseCase: SaveConnectedUsersUseCase,
@@ -37,25 +36,34 @@ class LoginViewModel @Inject constructor(
         pass.value = pwd
     }
 
-    fun onLoginClicked() {
+    fun onLoginClicked(onSuccess: () -> Unit = {}) {
         loaderState.value = true
-        fireBaseClient.login(uname.value, ::checkPwd, ::onUserNotFound)
+        fireBaseClient.login(uname.value, ::checkPwd, ::onUserNotFound,onSuccess)
     }
 
     fun onSignUpClicked() {
         navigateTo(Route.AppSignUp.route)
     }
 
-    private fun checkPwd(user: UserInformation) {
+    private fun checkPwd(user: UserInformation, onSuccess: () -> Unit = {}) {
         if (user.password == pass.value) {
             viewModelScope.launch {
                 saveTokenUseCase.saveToken(user.token)
                 saveMobileUseCase.saveMobileNumber(uname.value)
-                saveConnectedUsersUseCase.saveConnectedList(user.usersConnected)
+                delay(500)
                 setNameUseCase.saveName(user.name)
                 setUserNameUseCase.saveUserName(user.userName)
-                navigateTo(Route.HomeScreen.route, isSingleTop = true)
-                loaderState.value = false
+                saveConnectedUsersUseCase.saveConnectedList(user.userName, user.usersConnected)
+                    .collect {
+                        it.onSuccess {
+                            onSuccess()
+                            loaderState.value = false
+                        }
+                        it.onFailure {
+                            showToast("Something went wrong")
+                            loaderState.value = false
+                        }
+                    }
             }
         } else {
             loaderState.value = false
