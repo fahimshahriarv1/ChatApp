@@ -1,5 +1,8 @@
 package com.example.chatappstarting.presentation.utils
 
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.appcompat.app.AppCompatActivity
 import com.example.chatappstarting.data.room.model.UserInfo
 import com.example.chatappstarting.data.room.model.UserInformation
 import com.example.chatappstarting.presentation.ui.home.model.StatusEnum
@@ -24,4 +27,10 @@ fun UserInfo.mapInfo(): UserInformation {
         },
         token = this.token
     )
+}
+
+fun Context.getActivity(): AppCompatActivity? = when (this) {
+    is AppCompatActivity -> this
+    is ContextWrapper -> baseContext.getActivity()
+    else -> null
 }
