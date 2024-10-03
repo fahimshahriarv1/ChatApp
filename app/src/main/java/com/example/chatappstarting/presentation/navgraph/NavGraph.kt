@@ -1,6 +1,8 @@
 package com.example.chatappstarting.presentation.navgraph
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +21,7 @@ import com.example.chatappstarting.presentation.ui.base.BaseComposable
 import com.example.chatappstarting.presentation.ui.base.BaseComposableWithLifeCycle
 import com.example.chatappstarting.presentation.ui.base.ComposableLifeCycleImpl
 import com.example.chatappstarting.presentation.ui.base.FlowObserver
+import com.example.chatappstarting.presentation.ui.home.HomeActivity
 import com.example.chatappstarting.presentation.ui.home.HomeViewModel
 import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
 import com.example.chatappstarting.presentation.ui.login.LoginViewModel
@@ -27,7 +30,9 @@ import com.example.chatappstarting.presentation.ui.signup.MobileNumberScreen
 import com.example.chatappstarting.presentation.ui.signup.OtpVerificationScreen
 import com.example.chatappstarting.presentation.ui.signup.PasswordScreen
 import com.example.chatappstarting.presentation.ui.signup.SignUpViewModel
+import com.example.chatappstarting.presentation.ui.splashScreen.SplashActivity
 import com.example.chatappstarting.presentation.ui.utils.showToastMessage
+import com.example.chatappstarting.presentation.utils.getActivity
 
 @Composable
 fun NavGraph(
@@ -55,7 +60,7 @@ fun NavGraph(
                             isLoading = vm.loaderState.value,
                             unameChanged = vm::onUnameChanged,
                             passChanged = vm::onPassChanged,
-                            onLoginClicked = vm::onLoginClicked,
+                            onLoginClicked = { vm.onLoginClicked { gotoHome(context) } },
                             onSignUpClicked = vm::onSignUpClicked
                         )
                     },
@@ -95,8 +100,11 @@ fun NavGraph(
                             isError = vm.isMobileNumberError,
                             onCountryCodeClicked = vm::onCountryCodeSelected,
                             mobileNumberChanged = vm::onMobileNumberChanged,
+                            isLoading = vm.loaderState.value,
                             onSendOtpClicked = {
-                                navController.navigate(Route.SignUpOtpScreen(mobileNumber = vm.mobileNumber.value))
+                                vm.checkUserExistOrNot {
+                                    navController.navigate(Route.SignUpOtpScreen(mobileNumber = vm.mobileNumber.value))
+                                }
                             },
                             navigateBack = {
                                 navController.navigateUp()
@@ -123,6 +131,8 @@ fun NavGraph(
                 })
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
+
+                vm.isResend = false
 
                 vm.onSendOtpClicked(LocalContext.current as Activity)
 
@@ -156,6 +166,7 @@ fun NavGraph(
                 })
             ) {
                 val vm: SignUpViewModel = hiltViewModel()
+                val context = LocalContext.current
 
                 BaseComposable(
                     composable = {
@@ -166,15 +177,13 @@ fun NavGraph(
                             isLoading = vm.loaderState.value,
                             onPasswordValueChanged = vm::onPasswordChanged,
                             onReEnterPasswordValueChanged = vm::onReEnterPasswordChanged,
-                            onOkClicked = vm::onPasswordOkClicked,
+                            onOkClicked = { vm.onPasswordOkClicked { gotoHome(context) } },
                             navigateBack = { navController.navigateUp() }
                         )
                     },
                     navController = navController,
                     navChannel = vm.navChannel
                 )
-
-                val context = LocalContext.current
 
                 FlowObserver(flow = vm.showToast) {
                     if (it != null) {
@@ -202,7 +211,9 @@ fun NavGraph(
                             list = list,
                             isLoading = vm.loaderState.value,
                             addUserText = vm.userAddText,
-                            onLogoutClicked = vm::onLogout,
+                            onLogoutClicked = {
+                                vm.onLogout { gotoSplash(context) }
+                            },
                             onAdduserClicked = vm::onAdduserClicked
                         )
                     },
@@ -234,4 +245,16 @@ fun NavGraph(
 
 private fun navigateUp(navController: NavController) {
     navController.navigateUp()
+}
+
+private fun gotoSplash(context: Context) {
+    val intent = Intent(context, SplashActivity::class.java)
+    context.startActivity(intent)
+    context.getActivity()?.finish()
+}
+
+private fun gotoHome(context: Context) {
+    val intent = Intent(context, HomeActivity::class.java)
+    context.startActivity(intent)
+    context.getActivity()?.finish()
 }
