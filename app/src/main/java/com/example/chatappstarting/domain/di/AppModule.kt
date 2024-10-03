@@ -1,17 +1,16 @@
 package com.example.chatappstarting.domain.di
 
 import android.app.Application
-import com.example.chatappstarting.data.manager.LocalUserMangerImpl
-import com.example.chatappstarting.domain.usecases.data.LocalUserLogin
-import com.example.chatappstarting.domain.manager.LocalUserManger
-import com.example.chatappstarting.domain.usecases.GetTokenUseCase
-import com.example.chatappstarting.domain.usecases.GetUserLoggedInStateUseCase
-import com.example.chatappstarting.domain.usecases.SaveTokenUseCase
+import android.content.Context
+import com.example.chatappstarting.data.room.LocalDatabase
 import com.example.chatappstarting.presentation.navgraph.AppNavigator
 import com.example.chatappstarting.presentation.navgraph.AppNavigatorImpl
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -20,28 +19,22 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideLocalUserManger(application: Application): LocalUserManger =
-        LocalUserMangerImpl(application)
-
-    @Provides
-    @Singleton
-    fun provideLocalUserLogin(localUserManger: LocalUserManger): LocalUserLogin = LocalUserLogin(
-        saveToken = SaveTokenUseCase(localUserManger),
-        getToken = GetTokenUseCase(localUserManger),
-        getUSerLoggedInState = GetUserLoggedInStateUseCase(localUserManger)
-    )
-
-    @Provides
-    @Singleton
-    fun provideGetUserLoginState(localUserManger: LocalUserManger): GetUserLoggedInStateUseCase =
-        GetUserLoggedInStateUseCase(localUserManger)
-
-    @Provides
-    @Singleton
-    fun provideSaveTokenUseCase(localUserManger: LocalUserManger): SaveTokenUseCase =
-        SaveTokenUseCase(localUserManger)
-
-    @Provides
-    @Singleton
     fun provideAppNavigator(): AppNavigator = AppNavigatorImpl()
+
+    @Provides
+    fun provideAppContext(application: Application): Context = application
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFireBaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideLocalDatabase(@ApplicationContext context: Context): LocalDatabase =
+        LocalDatabase.create(context)
 }

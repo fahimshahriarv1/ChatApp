@@ -2,8 +2,9 @@ package com.example.chatappstarting.presentation.ui.home
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import com.example.chatappstarting.presentation.navgraph.NavGraph
+import com.example.chatappstarting.presentation.navgraph.Route
 import com.example.chatappstarting.presentation.ui.base.BaseActivity
-import com.example.chatappstarting.presentation.ui.home.views.HomeScreen
 
 class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,7 +12,7 @@ class HomeActivity : BaseActivity() {
         hideToolbar()
         hideSystemUI()
         setContent {
-            HomeScreen()
+            NavGraph(startDest = Route.AppMain.route)
         }
     }
 }
