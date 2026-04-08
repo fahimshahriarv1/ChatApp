@@ -17,11 +17,11 @@ android {
     val df = SimpleDateFormat("dd-MMM-yyyy HH-mm-ss a", Locale.US)
     val buildDate = df.format(c.time)
 
-    namespace = "com.example.chatappstarting"
+    namespace = "com.fahimshahriarv1.mtom"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.chatappstarting"
+        applicationId = "com.fahimshahriarv1.mtom"
         minSdk = 23
         targetSdk = 34
         versionCode = 1
@@ -57,7 +57,7 @@ android {
                 this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val variantName: String = variantOutputImpl.name
             val outputFileName =
-                "[$variantName]LetsChat - ${defaultConfig.versionName}-(${defaultConfig.versionCode})-$buildDate-.apk"
+                "[$variantName]MtoM - ${defaultConfig.versionName}-(${defaultConfig.versionCode})-$buildDate-.apk"
             variantOutputImpl.outputFileName = outputFileName
         }
     }

@@ -17,7 +17,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".LetsChatApplication"
+        android:name=".MtoMApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -44,7 +44,7 @@
             android:name=".presentation.ui.home.HomeActivity"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.ChatAppStarting" />
+            android:theme="@style/Theme.MtoM" />
 
         <service
             android:name=".service.ServiceMain"
