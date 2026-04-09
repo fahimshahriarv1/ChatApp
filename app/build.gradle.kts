@@ -73,7 +73,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
@@ -141,4 +141,7 @@ dependencies {
 
     //jwt
     implementation("io.jsonwebtoken:jjwt:0.7.0")
+
+    //Firebase Realtime Database
+    implementation("com.google.firebase:firebase-database")
 }

@@ -28,6 +28,11 @@ sealed class Route(
         operator fun invoke(mobileNumber: String) =
             route.appendParams(MOBILE_NUMBER to mobileNumber)
     }
+
+    object ChatScreen : Route(route = "chatScreen", "chat_id", "recipient_name") {
+        operator fun invoke(chatId: String, recipientName: String) =
+            route.appendParams("chat_id" to chatId, "recipient_name" to recipientName)
+    }
 }
 
 internal fun String.appendParams(vararg params: Pair<String, Any?>): String {

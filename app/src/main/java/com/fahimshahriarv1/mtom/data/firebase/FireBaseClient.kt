@@ -121,6 +121,34 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
             }
     }
 
+    fun addMutualConnection(userA: String, userB: String, onDone: () -> Unit) {
+        // Add B to A's list, then A to B's list
+        dbRef.document(userA).get().addOnSuccessListener { docA ->
+            val infoA = gson.fromJson(gson.toJson(docA.data), UserInfo::class.java)
+            val listA = (infoA?.users_connected ?: listOf()).toMutableList()
+            if (userB !in listA) listA.add(userB)
+            listA.remove("") // clean empty entries
+
+            dbRef.document(userA)
+                .set(ConnectedList(listA), SetOptions.mergeFields(USERS_CONNECTED))
+                .addOnSuccessListener {
+                    // Now add A to B's list
+                    dbRef.document(userB).get().addOnSuccessListener { docB ->
+                        val infoB = gson.fromJson(gson.toJson(docB.data), UserInfo::class.java)
+                        val listB = (infoB?.users_connected ?: listOf()).toMutableList()
+                        if (userA !in listB) listB.add(userA)
+                        listB.remove("")
+
+                        dbRef.document(userB)
+                            .set(ConnectedList(listB), SetOptions.mergeFields(USERS_CONNECTED))
+                            .addOnSuccessListener { onDone() }
+                            .addOnFailureListener { onDone() }
+                    }.addOnFailureListener { onDone() }
+                }
+                .addOnFailureListener { onDone() }
+        }.addOnFailureListener { onDone() }
+    }
+
     fun setStatus(uname: String, status: StatusEnum = StatusEnum.NONE) {
         dbRef.document(uname)
             .set(
@@ -160,10 +188,44 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
             tokenStatusListener.remove()
     }
 
+    fun getUserPassword(uname: String, onResult: (String?) -> Unit) {
+        dbRef.document(uname).get()
+            .addOnSuccessListener {
+                val data = it.data
+                if (data != null) {
+                    val info = Gson().fromJson(Gson().toJson(data), UserInfo::class.java)
+                    onResult(info.password)
+                } else {
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener {
+                onResult(null)
+            }
+    }
+
+    fun fetchConnectionList(uname: String, onResult: (List<String>) -> Unit) {
+        dbRef.document(uname).get()
+            .addOnSuccessListener {
+                val data = it.data
+                if (data != null) {
+                    val info = gson.fromJson(gson.toJson(data), UserInfo::class.java)
+                    val connections = info.users_connected.filter { c -> c.isNotEmpty() }
+                    onResult(connections)
+                } else {
+                    onResult(emptyList())
+                }
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to fetch connections: ${it.message}")
+                onResult(emptyList())
+            }
+    }
+
     fun checkUserExistence(
         uname: String,
         existOrNot: (Boolean) -> Unit = {},
-        onFailed: () -> Unit = {}
+        onFailed: (Exception) -> Unit = {}
     ) {
 
         dbRef.document(uname)
@@ -175,7 +237,7 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
                     existOrNot(true)
             }
             .addOnFailureListener {
-                onFailed()
+                onFailed(it)
             }
     }
 }

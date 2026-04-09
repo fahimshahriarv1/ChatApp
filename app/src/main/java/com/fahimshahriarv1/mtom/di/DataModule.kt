@@ -1,9 +1,12 @@
 package com.fahimshahriarv1.mtom.di
 
 import android.app.Application
+import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
+import com.fahimshahriarv1.mtom.data.repository.ChatRepositoryImpl
 import com.fahimshahriarv1.mtom.data.repository.LocalDatabaseRepositoryImpl
 import com.fahimshahriarv1.mtom.data.repository.LocalUserRepositoryImpl
 import com.fahimshahriarv1.mtom.data.room.LocalDatabase
+import com.fahimshahriarv1.mtom.domain.repository.ChatRepository
 import com.fahimshahriarv1.mtom.domain.repository.LocalDatabaseRepository
 import com.fahimshahriarv1.mtom.domain.repository.LocalUserRepository
 import com.fahimshahriarv1.mtom.domain.usecases.GetTokenUseCase
@@ -48,4 +51,15 @@ object DataModule {
     @Singleton
     fun provideSaveTokenUseCase(localUserRepository: LocalUserRepository): SaveTokenUseCase =
         SaveTokenUseCase(localUserRepository)
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(
+        db: LocalDatabase,
+        firebaseMessageManager: FirebaseMessageManager
+    ): ChatRepository = ChatRepositoryImpl(
+        messageInfoDao = db.getMessageInfo(),
+        chatUserDao = db.getUserList(),
+        firebaseMessageManager = firebaseMessageManager
+    )
 }

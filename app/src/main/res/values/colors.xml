@@ -11,4 +11,9 @@
     <color name="gray_light">#ADADAD</color>
     <color name="error">#FA0808</color>
     <color name="transparent">#00000000</color>
+    <color name="chat_bg">#F0F0F0</color>
+    <color name="sent_bubble">#00A661</color>
+    <color name="received_bubble">#FFFFFF</color>
+    <color name="chat_input_bg">#FFFFFF</color>
+    <color name="msg_time">#ADADAD</color>
 </resources>

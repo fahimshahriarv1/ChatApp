@@ -53,6 +53,7 @@ class LoginViewModel @Inject constructor(
                 delay(500)
                 setNameUseCase.saveName(user.name)
                 setUserNameUseCase.saveUserName(user.userName)
+
                 saveConnectedUsersUseCase.saveConnectedList(user.userName, user.usersConnected)
                     .collect {
                         it.onSuccess {

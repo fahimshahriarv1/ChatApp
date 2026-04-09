@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatUserDao {
-    @Query("SELECT * FROM chat_user_list")
+    @Query("SELECT * FROM chat_user_list ORDER BY CAST(time_stamp AS INTEGER) DESC")
     fun getChats(): Flow<List<ChatUserEntity>>
 
     @Query("UPDATE chat_user_list SET message = :message,time_stamp=:timeStamp,sender_id=:senderId,message_id=:messageId,message_status=:messageStatus WHERE chat_id =:id ")

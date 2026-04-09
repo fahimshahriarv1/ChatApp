@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageInfoDao {
-    @Query("SELECT * FROM all_chats WHERE chat_id = :id")
+    @Query("SELECT * FROM all_chats WHERE chat_id = :id ORDER BY CAST(time_stamp AS INTEGER) ASC")
     fun getMessageInfo(id: String): Flow<List<MessageInfoEntity>>
 
     @Query("DELETE FROM all_chats WHERE time_stamp = :timeStamp AND chat_id = :chatId AND sender_id=:senderId")

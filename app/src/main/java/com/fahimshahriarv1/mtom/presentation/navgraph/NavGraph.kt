@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,6 +25,8 @@ import com.fahimshahriarv1.mtom.presentation.ui.base.ComposableLifeCycleImpl
 import com.fahimshahriarv1.mtom.presentation.ui.base.FlowObserver
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeViewModel
+import com.fahimshahriarv1.mtom.presentation.ui.chat.ChatScreen
+import com.fahimshahriarv1.mtom.presentation.ui.chat.ChatViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.home.views.HomeScreen
 import com.fahimshahriarv1.mtom.presentation.ui.login.LoginViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.login.ui.LoginScreen
@@ -82,16 +86,11 @@ fun NavGraph(
         ) {
             composable(
                 route = Route.SignUpMobileScreen.route,
-                arguments = listOf(
-                    navArgument(
-                        Route.SignUpMobileScreen.route,
-                        builder = {
-                            type = NavType.ParcelableArrayType(type = Argument::class.java)
-                        }
-                    )
-                )
             ) {
-                val vm: SignUpViewModel = hiltViewModel()
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Route.AppSignUp.route)
+                }
+                val vm: SignUpViewModel = hiltViewModel(parentEntry)
                 BaseComposable(
                     composable = {
                         MobileNumberScreen(
@@ -130,20 +129,30 @@ fun NavGraph(
                     nullable = true
                 })
             ) {
-                val vm: SignUpViewModel = hiltViewModel()
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Route.AppSignUp.route)
+                }
+                val vm: SignUpViewModel = hiltViewModel(parentEntry)
+                val activity = LocalContext.current as Activity
 
-                vm.isResend = false
-
-                vm.onSendOtpClicked(LocalContext.current as Activity)
+                LaunchedEffect(Unit) {
+                    vm.sendOtp(activity)
+                }
 
                 BaseComposable(
                     composable = {
                         OtpVerificationScreen(
                             otp = vm.otp,
                             isLoading = vm.loaderState.value,
+                            phoneNumber = vm.getFullPhoneNumber(),
+                            resendTimer = vm.resendTimer,
                             onOtpValueChanged = vm::onOtpChanged,
-                            navigateBack = { navController.navigateUp() },
-                            onOkClicked = vm::verifyOtp
+                            navigateBack = {
+                                vm.resetOtpState()
+                                navController.navigateUp()
+                            },
+                            onVerifyClicked = vm::verifyOtp,
+                            onResendClicked = { vm.resendOtp(activity) }
                         )
                     },
                     navController = navController,
@@ -165,7 +174,10 @@ fun NavGraph(
                     nullable = true
                 })
             ) {
-                val vm: SignUpViewModel = hiltViewModel()
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Route.AppSignUp.route)
+                }
+                val vm: SignUpViewModel = hiltViewModel(parentEntry)
                 val context = LocalContext.current
 
                 BaseComposable(
@@ -203,18 +215,29 @@ fun NavGraph(
 
                 val list by vm.userList.collectAsStateWithLifecycle(initialValue = listOf())
                 val name by vm.name.collectAsStateWithLifecycle(initialValue = "")
+                val chatList by vm.chatList.collectAsStateWithLifecycle(initialValue = listOf())
+                val currentUser by vm.userName.collectAsStateWithLifecycle(initialValue = "")
 
                 BaseComposableWithLifeCycle(
                     composable = {
                         HomeScreen(
                             name = name,
+                            currentUserName = currentUser,
                             list = list,
+                            chatList = chatList,
                             isLoading = vm.loaderState.value,
                             addUserText = vm.userAddText,
                             onLogoutClicked = {
                                 vm.onLogout { gotoSplash(context) }
                             },
-                            onAdduserClicked = vm::onAdduserClicked
+                            onStartChatClicked = vm::onAdduserClicked,
+                            onUserChatClicked = { recipientName ->
+                                val chatId = generateChatId(currentUser, recipientName)
+                                navController.navigate(Route.ChatScreen(chatId, recipientName))
+                            },
+                            onChatItemClicked = { chatId, recipientName ->
+                                navController.navigate(Route.ChatScreen(chatId, recipientName))
+                            }
                         )
                     },
                     navController = navController,
@@ -232,6 +255,49 @@ fun NavGraph(
                 )
 
                 vm.getNames()
+
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
+                    }
+                }
+
+                FlowObserver(flow = vm.navigateToChat) { (chatId, recipientName) ->
+                    navController.navigate(Route.ChatScreen(chatId, recipientName))
+                }
+            }
+
+            composable(
+                route = Route.ChatScreen.route + "/{chat_id}/{recipient_name}",
+                arguments = listOf(
+                    navArgument("chat_id") { type = NavType.StringType },
+                    navArgument("recipient_name") { type = NavType.StringType }
+                )
+            ) {
+                val vm: ChatViewModel = hiltViewModel()
+                val context = LocalContext.current
+                val messages by vm.messages.collectAsStateWithLifecycle()
+                val currentUser by vm.currentUserId.collectAsStateWithLifecycle()
+                val isRecipientOnline by vm.isRecipientOnline.collectAsStateWithLifecycle()
+
+                vm.startStatusObserver()
+
+                BaseComposable(
+                    composable = {
+                        ChatScreen(
+                            recipientName = vm.recipientName,
+                            isRecipientOnline = isRecipientOnline,
+                            messages = messages,
+                            messageInput = vm.messageInput,
+                            currentUserId = currentUser,
+                            onMessageInputChanged = vm::onMessageInputChanged,
+                            onSendClicked = vm::sendMessage,
+                            navigateBack = { navController.navigateUp() }
+                        )
+                    },
+                    navController = navController,
+                    navChannel = vm.navChannel
+                )
 
                 FlowObserver(flow = vm.showToast) {
                     if (it != null) {
@@ -257,4 +323,8 @@ private fun gotoHome(context: Context) {
     val intent = Intent(context, HomeActivity::class.java)
     context.startActivity(intent)
     context.getActivity()?.finish()
+}
+
+private fun generateChatId(user1: String, user2: String): String {
+    return if (user1 < user2) "${user1}_$user2" else "${user2}_$user1"
 }
