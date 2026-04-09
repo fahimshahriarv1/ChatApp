@@ -33,6 +33,8 @@ sealed class Route(
         operator fun invoke(chatId: String, recipientName: String) =
             route.appendParams("chat_id" to chatId, "recipient_name" to recipientName)
     }
+
+    object SettingsScreen : Route(route = "settingsScreen")
 }
 
 internal fun String.appendParams(vararg params: Pair<String, Any?>): String {

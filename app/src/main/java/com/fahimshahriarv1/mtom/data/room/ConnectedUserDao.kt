@@ -14,4 +14,7 @@ interface ConnectedUserDao {
 
     @Query("SELECT users_connected FROM user_list WHERE user_name =:userName")
     fun getConnectionList(userName: String): Flow<List<String>>
+
+    @Query("SELECT * FROM user_list")
+    suspend fun getAllConnections(): List<ConnectedUserEntity>
 }

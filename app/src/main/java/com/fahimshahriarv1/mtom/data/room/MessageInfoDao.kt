@@ -21,4 +21,7 @@ interface MessageInfoDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNewMessage(messageInfoEntity: MessageInfoEntity)
+
+    @Query("SELECT * FROM all_chats")
+    suspend fun getAllMessages(): List<MessageInfoEntity>
 }

@@ -31,4 +31,7 @@ interface ChatUserDao {
 
     @Query("DELETE FROM chat_user_list")
     suspend fun deleteAllChat()
+
+    @Query("SELECT * FROM chat_user_list")
+    suspend fun getAllChatUsers(): List<ChatUserEntity>
 }

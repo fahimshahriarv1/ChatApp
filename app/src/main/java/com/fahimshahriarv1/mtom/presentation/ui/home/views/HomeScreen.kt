@@ -33,7 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,7 +44,6 @@ import com.fahimshahriarv1.mtom.R
 import com.fahimshahriarv1.mtom.data.room.model.ChatUserEntity
 import com.fahimshahriarv1.mtom.data.room.model.UserInformation
 import com.fahimshahriarv1.mtom.domain.model.StatusEnum
-import com.fahimshahriarv1.mtom.presentation.widgets.TopAppBarActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +54,7 @@ fun HomeScreen(
     chatList: List<ChatUserEntity> = emptyList(),
     isLoading: Boolean = false,
     addUserText: MutableState<String> = mutableStateOf(""),
-    onLogoutClicked: () -> Unit = {},
+    onSettingsClicked: () -> Unit = {},
     onStartChatClicked: () -> Unit = {},
     onUserChatClicked: (userName: String) -> Unit = {},
     onChatItemClicked: (chatId: String, recipientName: String) -> Unit = { _, _ -> }
@@ -69,11 +71,12 @@ fun HomeScreen(
                 navigationIcon = {},
                 scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 actions = {
-                    TopAppBarActionButton(
-                        imageIcon = painterResource(id = R.drawable.drop_down_arrow),
-                        description = ""
-                    ) {
-                        onLogoutClicked()
+                    IconButton(onClick = { onSettingsClicked() }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

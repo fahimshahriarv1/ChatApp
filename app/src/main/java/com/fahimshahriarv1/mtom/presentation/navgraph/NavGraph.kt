@@ -30,6 +30,8 @@ import com.fahimshahriarv1.mtom.presentation.ui.chat.ChatViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.home.views.HomeScreen
 import com.fahimshahriarv1.mtom.presentation.ui.login.LoginViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.login.ui.LoginScreen
+import com.fahimshahriarv1.mtom.presentation.ui.settings.SettingsScreen
+import com.fahimshahriarv1.mtom.presentation.ui.settings.SettingsViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.signup.MobileNumberScreen
 import com.fahimshahriarv1.mtom.presentation.ui.signup.OtpVerificationScreen
 import com.fahimshahriarv1.mtom.presentation.ui.signup.PasswordScreen
@@ -227,8 +229,8 @@ fun NavGraph(
                             chatList = chatList,
                             isLoading = vm.loaderState.value,
                             addUserText = vm.userAddText,
-                            onLogoutClicked = {
-                                vm.onLogout { gotoSplash(context) }
+                            onSettingsClicked = {
+                                navController.navigate(Route.SettingsScreen.route)
                             },
                             onStartChatClicked = vm::onAdduserClicked,
                             onUserChatClicked = { recipientName ->
@@ -297,6 +299,39 @@ fun NavGraph(
                     },
                     navController = navController,
                     navChannel = vm.navChannel
+                )
+
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
+                    }
+                }
+            }
+
+            composable(route = Route.SettingsScreen.route) {
+                val vm: SettingsViewModel = hiltViewModel()
+                val context = LocalContext.current
+
+                val name by vm.name.collectAsStateWithLifecycle(initialValue = "")
+                val currentUser by vm.userName.collectAsStateWithLifecycle(initialValue = "")
+                val isProcessing by vm.isProcessing.collectAsStateWithLifecycle()
+                val lastLocalBackup by vm.lastLocalBackup.collectAsStateWithLifecycle()
+                val lastDriveBackup by vm.lastDriveBackup.collectAsStateWithLifecycle()
+
+                vm.getNames()
+
+                SettingsScreen(
+                    name = name,
+                    userName = currentUser,
+                    isProcessing = isProcessing,
+                    lastLocalBackup = lastLocalBackup,
+                    lastDriveBackup = lastDriveBackup,
+                    onBackupLocal = { uri -> vm.backupToLocal(uri) },
+                    onRestoreLocal = { uri -> vm.restoreFromLocal(uri) },
+                    onBackupDrive = { account -> vm.backupToDrive(account) },
+                    onRestoreDrive = { account -> vm.restoreFromDrive(account) },
+                    onLogout = { vm.onLogout { gotoSplash(context) } },
+                    navigateBack = { navController.navigateUp() }
                 )
 
                 FlowObserver(flow = vm.showToast) {
