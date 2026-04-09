@@ -40,43 +40,45 @@ class LoginViewModel @Inject constructor(
 
     fun onLoginClicked(onSuccess: () -> Unit = {}) {
         loaderState.value = true
-        fireBaseClient.login(uname.value, ::checkPwd, ::onUserNotFound,onSuccess)
+        fireBaseClient.login(
+            uname = uname.value,
+            password = pass.value,
+            onSuccess = { user -> onLoginSuccess(user, onSuccess) },
+            onUserNotExist = {
+                loaderState.value = false
+                showToast("No user found")
+            },
+            onWrongPassword = {
+                loaderState.value = false
+                showToast("Username or password invalid")
+            }
+        )
     }
 
     fun onSignUpClicked() {
         navigateTo(Route.AppSignUp.route)
     }
 
-    private fun checkPwd(user: UserInformation, onSuccess: () -> Unit = {}) {
-        if (user.password == pass.value) {
-            firebaseMessageManager.registerUser(user.userName)
-            viewModelScope.launch {
-                saveTokenUseCase.saveToken(user.token)
-                saveMobileUseCase.saveMobileNumber(uname.value)
-                delay(500)
-                setNameUseCase.saveName(user.name)
-                setUserNameUseCase.saveUserName(user.userName)
+    private fun onLoginSuccess(user: UserInformation, onSuccess: () -> Unit) {
+        firebaseMessageManager.registerUser(user.userName)
+        viewModelScope.launch {
+            saveTokenUseCase.saveToken(user.token)
+            saveMobileUseCase.saveMobileNumber(uname.value)
+            delay(500)
+            setNameUseCase.saveName(user.name)
+            setUserNameUseCase.saveUserName(user.userName)
 
-                saveConnectedUsersUseCase.saveConnectedList(user.userName, user.usersConnected)
-                    .collect {
-                        it.onSuccess {
-                            onSuccess()
-                            loaderState.value = false
-                        }
-                        it.onFailure {
-                            showToast("Something went wrong")
-                            loaderState.value = false
-                        }
+            saveConnectedUsersUseCase.saveConnectedList(user.userName, user.usersConnected)
+                .collect {
+                    it.onSuccess {
+                        onSuccess()
+                        loaderState.value = false
                     }
-            }
-        } else {
-            loaderState.value = false
-            showToast("Unam or pass invalid")
+                    it.onFailure {
+                        showToast("Something went wrong")
+                        loaderState.value = false
+                    }
+                }
         }
-    }
-
-    private fun onUserNotFound() {
-        loaderState.value = false
-        showToast("no user found")
     }
 }

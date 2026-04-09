@@ -6,6 +6,7 @@ import com.fahimshahriarv1.mtom.constants.USERS_CONNECTED
 import com.fahimshahriarv1.mtom.data.room.model.UserInfo
 import com.fahimshahriarv1.mtom.data.room.model.UserInformation
 import com.fahimshahriarv1.mtom.domain.model.StatusEnum
+import com.fahimshahriarv1.mtom.presentation.utils.hashPassword
 import com.fahimshahriarv1.mtom.presentation.utils.mapInfo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -27,9 +28,10 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
 
     fun login(
         uname: String,
-        onSendPassword: (UserInformation, () -> Unit) -> Unit = { _, _ -> },
+        password: String,
+        onSuccess: (UserInformation) -> Unit = {},
         onUserNotExist: () -> Unit = {},
-        onSuccess: () -> Unit = {}
+        onWrongPassword: () -> Unit = {}
     ) {
         dbRef.document(uname)
             .get()
@@ -38,16 +40,23 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
 
                 Log.d(TAG, it.toString())
 
-                if (data == null)
+                if (data == null) {
                     onUserNotExist()
-                else {
+                } else {
                     val info = Gson().fromJson(Gson().toJson(data), UserInfo::class.java)
+                    val hashedInput = hashPassword(password)
+
+                    if (info.password != hashedInput) {
+                        onWrongPassword()
+                        return@addOnSuccessListener
+                    }
+
                     val token = generateToken(info.user_name, info.password)
                     setLoginToken(
                         info.user_name,
                         token,
                         onSuccess = {
-                            onSendPassword(info.mapInfo().copy(token = token), onSuccess)
+                            onSuccess(info.mapInfo().copy(token = token))
                         }
                     )
                 }
@@ -57,7 +66,7 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
     fun createUser(mobile: String, pass: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
         val user = UserInfo(
             name = mobile,
-            password = pass,
+            password = hashPassword(pass),
             user_name = mobile,
             status = "online",
             users_connected = listOf("")
