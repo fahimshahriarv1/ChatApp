@@ -15,6 +15,7 @@ class FirebaseMessageManager @Inject constructor() {
     companion object {
         private const val TAG = "FirebaseMsg"
         private const val MESSAGES_PATH = "messages"
+        private const val REGISTERED_USERS_PATH = "registered_users"
     }
 
     private val database = FirebaseDatabase.getInstance()
@@ -27,6 +28,18 @@ class FirebaseMessageManager @Inject constructor() {
         database.getReference("_test_ping").setValue(System.currentTimeMillis())
             .addOnSuccessListener { Log.d(TAG, "RTDB WRITE TEST: SUCCESS — database is reachable") }
             .addOnFailureListener { Log.e(TAG, "RTDB WRITE TEST: FAILED — ${it.message}") }
+    }
+
+    fun registerUser(userId: String, onComplete: () -> Unit = {}) {
+        database.getReference(REGISTERED_USERS_PATH).child(userId).setValue(true)
+            .addOnSuccessListener {
+                Log.d(TAG, "User $userId registered in RTDB")
+                onComplete()
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to register user in RTDB: ${it.message}")
+                onComplete()
+            }
     }
 
     fun sendMessage(recipientId: String, senderId: String, message: String, onResult: (Result<Unit>) -> Unit) {

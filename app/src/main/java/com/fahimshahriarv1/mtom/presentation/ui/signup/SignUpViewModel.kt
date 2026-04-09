@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.fahimshahriarv1.mtom.data.firebase.FireBaseClient
+import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
 import com.fahimshahriarv1.mtom.domain.usecases.SaveNameUseCase
 import com.fahimshahriarv1.mtom.domain.usecases.SaveTokenUseCase
 import com.fahimshahriarv1.mtom.domain.usecases.SaveUserNameUseCase
@@ -32,7 +33,8 @@ class SignUpViewModel @Inject constructor(
     private val client: FireBaseClient,
     private val setNameUseCase: SaveNameUseCase,
     private val setUnameUseCase: SaveUserNameUseCase,
-    private val saveTokenUseCase: SaveTokenUseCase
+    private val saveTokenUseCase: SaveTokenUseCase,
+    private val firebaseMessageManager: FirebaseMessageManager
 ) : BaseViewModel() {
     private val _countryCode = mutableStateOf("+88")
     val countryCode: State<String> = _countryCode
@@ -192,6 +194,7 @@ class SignUpViewModel @Inject constructor(
             mobileNumber.value,
             password.value,
             onSuccess = {
+                firebaseMessageManager.registerUser(mobileNumber.value)
                 viewModelScope.launch {
                     setNameUseCase.saveName(mobileNumber.value)
                     setUnameUseCase.saveUserName(mobileNumber.value)

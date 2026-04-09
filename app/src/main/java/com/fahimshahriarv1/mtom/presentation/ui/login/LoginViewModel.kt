@@ -3,6 +3,7 @@ package com.fahimshahriarv1.mtom.presentation.ui.login
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.fahimshahriarv1.mtom.data.room.model.UserInformation
+import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
 import com.fahimshahriarv1.mtom.domain.usecases.SaveConnectedUsersUseCase
 import com.fahimshahriarv1.mtom.domain.usecases.SaveMobileUseCase
 import com.fahimshahriarv1.mtom.domain.usecases.SaveNameUseCase
@@ -21,7 +22,8 @@ class LoginViewModel @Inject constructor(
     private val saveTokenUseCase: SaveTokenUseCase,
     private val saveConnectedUsersUseCase: SaveConnectedUsersUseCase,
     private val setUserNameUseCase: SaveUserNameUseCase,
-    private val setNameUseCase: SaveNameUseCase
+    private val setNameUseCase: SaveNameUseCase,
+    private val firebaseMessageManager: FirebaseMessageManager
 ) :
     BaseViewModel() {
     val uname = mutableStateOf("")
@@ -47,6 +49,7 @@ class LoginViewModel @Inject constructor(
 
     private fun checkPwd(user: UserInformation, onSuccess: () -> Unit = {}) {
         if (user.password == pass.value) {
+            firebaseMessageManager.registerUser(user.userName)
             viewModelScope.launch {
                 saveTokenUseCase.saveToken(user.token)
                 saveMobileUseCase.saveMobileNumber(uname.value)

@@ -61,7 +61,9 @@ class ServiceMain : Service() {
             val uname = intent.getStringExtra(USER_NAME) ?: ""
             startServiceWithNotification()
             if (uname.isNotEmpty()) {
-                setupMessageListener(uname)
+                firebaseMessageManager.registerUser(uname) {
+                    setupMessageListener(uname)
+                }
             }
         }
     }
