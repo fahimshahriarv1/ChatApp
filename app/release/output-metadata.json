@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.fahimshahriarv1.mtom",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 1,
+      "versionName": "1.0",
+      "outputFile": "[release]MtoM - 1.0-(1)-10-Apr-2026 02-41-09 AM-.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/[release]MtoM - 1.0-(1)-10-Apr-2026 02-41-09 AM-.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/[release]MtoM - 1.0-(1)-10-Apr-2026 02-41-09 AM-.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 23
+}
