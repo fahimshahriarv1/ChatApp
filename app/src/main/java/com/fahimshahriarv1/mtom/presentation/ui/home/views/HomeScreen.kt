@@ -202,6 +202,7 @@ private fun ChatsTab(
                     contactName = recipientName,
                     lastMessage = chat.message,
                     timestamp = chat.timeStamp,
+                    unreadCount = chat.unreadCount,
                     onClick = { onChatItemClicked(chat.chatId, recipientName) }
                 )
             }

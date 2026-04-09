@@ -34,4 +34,10 @@ interface ChatUserDao {
 
     @Query("SELECT * FROM chat_user_list")
     suspend fun getAllChatUsers(): List<ChatUserEntity>
+
+    @Query("UPDATE chat_user_list SET unread_count = unread_count + 1 WHERE chat_id = :chatId")
+    suspend fun incrementUnreadCount(chatId: String)
+
+    @Query("UPDATE chat_user_list SET unread_count = 0 WHERE chat_id = :chatId")
+    suspend fun resetUnreadCount(chatId: String)
 }

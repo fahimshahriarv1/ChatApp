@@ -102,5 +102,11 @@ class ChatRepositoryImpl(
                 messageStatus = "received"
             )
         )
+
+        chatUserDao.incrementUnreadCount(chatId)
+    }
+
+    override suspend fun resetUnreadCount(chatId: String) {
+        chatUserDao.resetUnreadCount(chatId)
     }
 }

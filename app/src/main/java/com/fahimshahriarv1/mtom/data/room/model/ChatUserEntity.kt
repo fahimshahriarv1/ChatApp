@@ -14,4 +14,5 @@ data class ChatUserEntity(
     @ColumnInfo(name = "sender_id") val senderId: String,
     @ColumnInfo(name = "message_id") val messageId: String,
     @ColumnInfo(name = "message_status") val messageStatus: String,
+    @ColumnInfo(name = "unread_count", defaultValue = "0") val unreadCount: Int = 0,
 )

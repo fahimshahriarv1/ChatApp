@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.fahimshahriarv1.mtom.data.room.model.MessageInfoEntity
 import com.fahimshahriarv1.mtom.domain.repository.LocalUserRepository
+import com.fahimshahriarv1.mtom.domain.repository.ChatRepository
 import com.fahimshahriarv1.mtom.domain.usecases.GetChatMessagesUseCase
 import com.fahimshahriarv1.mtom.domain.usecases.SendMessageUseCase
 import com.fahimshahriarv1.mtom.presentation.ui.base.BaseViewModel
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getChatMessagesUseCase: GetChatMessagesUseCase,
+    private val chatRepository: ChatRepository,
     private val localUserRepository: LocalUserRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
@@ -45,6 +47,15 @@ class ChatViewModel @Inject constructor(
     init {
         observeMessages()
         loadCurrentUser()
+        markChatAsRead()
+    }
+
+    private fun markChatAsRead() {
+        if (chatId.isNotEmpty()) {
+            viewModelScope.launch {
+                chatRepository.resetUnreadCount(chatId)
+            }
+        }
     }
 
     private fun loadCurrentUser() {
