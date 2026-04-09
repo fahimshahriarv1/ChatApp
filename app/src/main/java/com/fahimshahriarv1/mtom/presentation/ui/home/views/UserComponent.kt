@@ -38,6 +38,9 @@ fun UserComponent(
     onTxt: () -> Unit = {},
     onCall: () -> Unit = {}
 ) {
+    val iconTint = if (isOnline) colorResource(id = R.color.black)
+        else colorResource(id = R.color.gray_light)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -46,9 +49,9 @@ fun UserComponent(
             .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
             .background(
                 color = if (isOnline)
-                    colorResource(id = R.color.app_main).copy(alpha = 0.1f)
-                else
                     colorResource(id = R.color.gray_light).copy(alpha = 0.15f)
+                else
+                    colorResource(id = R.color.gray_light).copy(alpha = 0.08f)
             )
             .padding(12.dp)
     ) {
@@ -58,7 +61,7 @@ fun UserComponent(
                 .size(44.dp)
                 .clip(CircleShape)
                 .background(
-                    if (isOnline) colorResource(id = R.color.app_main)
+                    if (isOnline) colorResource(id = R.color.black)
                     else colorResource(id = R.color.gray_light)
                 ),
             contentAlignment = Alignment.Center
@@ -66,7 +69,7 @@ fun UserComponent(
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = null,
-                tint = Color.White,
+                tint = colorResource(id = R.color.white),
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -79,12 +82,12 @@ fun UserComponent(
                 text = name,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.Black
+                color = colorResource(id = R.color.black)
             )
             Text(
                 text = if (isOnline) "Online" else "Offline",
                 fontSize = 12.sp,
-                color = if (isOnline) colorResource(id = R.color.app_main)
+                color = if (isOnline) colorResource(id = R.color.black)
                 else colorResource(id = R.color.gray_light)
             )
         }
@@ -97,8 +100,7 @@ fun UserComponent(
             Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = "Message",
-                tint = if (isOnline) colorResource(id = R.color.app_main)
-                else colorResource(id = R.color.gray_light),
+                tint = iconTint,
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -110,8 +112,7 @@ fun UserComponent(
             Icon(
                 imageVector = Icons.Default.Call,
                 contentDescription = "Call",
-                tint = if (isOnline) colorResource(id = R.color.app_main)
-                else colorResource(id = R.color.gray_light),
+                tint = iconTint,
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -123,8 +124,7 @@ fun UserComponent(
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = "Info",
-                tint = if (isOnline) colorResource(id = R.color.app_main)
-                else colorResource(id = R.color.gray_light),
+                tint = iconTint,
                 modifier = Modifier.size(22.dp)
             )
         }

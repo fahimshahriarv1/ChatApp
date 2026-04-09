@@ -90,7 +90,7 @@ fun OtpVerificationScreen(
                     text = stringResource(id = R.string.enter_your_otp),
                     textAlign = TextAlign.Center,
                     fontSize = 24.sp,
-                    color = colorResource(id = R.color.app_main),
+                    color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Medium
                 )
 
@@ -119,7 +119,7 @@ fun OtpVerificationScreen(
                         keyboardType = KeyboardType.Number
                     ),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colorResource(id = R.color.app_main),
+                        focusedBorderColor = colorResource(id = R.color.black),
                         errorBorderColor = colorResource(id = R.color.error),
                         unfocusedBorderColor = colorResource(id = R.color.gray_light)
                     ),
@@ -153,7 +153,7 @@ fun OtpVerificationScreen(
                         text = stringResource(id = R.string.resend_otp),
                         textAlign = TextAlign.Center,
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.app_main),
+                        color = colorResource(id = R.color.black),
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },

@@ -11,6 +11,7 @@ import com.fahimshahriarv1.mtom.presentation.navgraph.Route
 import com.fahimshahriarv1.mtom.presentation.ui.base.BaseActivity
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.presentation.ui.splashScreen.ui.SplashScreen
+import com.fahimshahriarv1.mtom.presentation.ui.theme.MtoMTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
@@ -23,10 +24,12 @@ class SplashActivity : BaseActivity() {
         hideSystemUI()
         setStatusBarColor(R.color.app_main)
         setContent {
-            when (viewModel.startDest.value) {
-                Route.AppMain.route -> gotoHome()
-                Route.AppAuth.route -> NavGraph(startDest = Route.AppAuth.route)
-                else -> SplashScreen()
+            MtoMTheme {
+                when (viewModel.startDest.value) {
+                    Route.AppMain.route -> gotoHome()
+                    Route.AppAuth.route -> NavGraph(startDest = Route.AppAuth.route)
+                    else -> SplashScreen()
+                }
             }
         }
     }

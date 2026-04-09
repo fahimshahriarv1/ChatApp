@@ -8,6 +8,7 @@ plugins {
     kotlin("kapt")
     kotlin("android")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
 }
@@ -126,11 +127,11 @@ dependencies {
     //firebaseCore
     implementation("com.google.firebase:firebase-analytics")
 
+    //Crashlytics
+    implementation("com.google.firebase:firebase-crashlytics")
+
     //gson
     implementation("com.google.code.gson:gson:2.11.0")
-
-    //jwt
-    implementation("io.jsonwebtoken:jjwt:0.7.0")
 
     //Firebase Realtime Database
     implementation("com.google.firebase:firebase-database")

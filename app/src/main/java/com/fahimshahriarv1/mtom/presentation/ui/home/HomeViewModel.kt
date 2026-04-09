@@ -169,8 +169,15 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    fun setOffline() {
+        val uname = if (::userInformation.isInitialized) userInformation.userName else userName.value
+        if (uname.isNotEmpty()) {
+            fireBaseClient.setStatus(uname, StatusEnum.OFFLINE)
+        }
+    }
+
     fun onLogout(onSuccess: () -> Unit = {}) {
-        fireBaseClient.setStatus(userName.value, StatusEnum.OFFLINE)
+        setOffline()
         logout(onSuccess)
     }
 }

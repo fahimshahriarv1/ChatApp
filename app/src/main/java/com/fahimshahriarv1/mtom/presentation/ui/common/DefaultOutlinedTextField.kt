@@ -35,7 +35,7 @@ fun DefaultOutlinedTextField(
     shape: Shape = RoundedCornerShape(8.dp),
     isError: Boolean = false,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = colorResource(id = R.color.app_main),
+        focusedBorderColor = colorResource(id = R.color.black),
         errorBorderColor = colorResource(id = R.color.error),
         unfocusedBorderColor = colorResource(id = R.color.gray_light)
     ),

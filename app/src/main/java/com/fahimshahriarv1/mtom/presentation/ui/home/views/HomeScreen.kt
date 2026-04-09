@@ -65,6 +65,7 @@ fun HomeScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = colorResource(id = R.color.white),
         topBar = {
             TopAppBar(
                 title = { Text(text = name, color = Color.White, fontSize = 14.sp) },
@@ -224,7 +225,7 @@ private fun ContactsTab(
         item { Spacer(modifier = Modifier.height(4.dp)) }
 
         if (list.isEmpty() && !isLoading) {
-            item { Text(text = "No contacts added", modifier = Modifier.padding(16.dp)) }
+            item { Text(text = "No contacts added", color = colorResource(id = R.color.gray_light), modifier = Modifier.padding(16.dp)) }
         }
 
         items(list) { userInfo ->

@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -110,7 +111,7 @@ fun MobileNumberScreen(
                         text = stringResource(id = R.string.enter_mobile_number),
                         textAlign = TextAlign.Center,
                         fontSize = 24.sp,
-                        color = colorResource(id = R.color.app_main),
+                        color = colorResource(id = R.color.black),
                         fontWeight = FontWeight.Medium
                     )
 
@@ -210,7 +211,7 @@ fun MobileNumberScreen(
                                 keyboardType = KeyboardType.Number
                             ),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = colorResource(id = R.color.app_main),
+                                focusedBorderColor = colorResource(id = R.color.black),
                                 errorBorderColor = colorResource(id = R.color.error),
                                 unfocusedBorderColor = colorResource(id = R.color.gray_light)
                             ),
@@ -238,7 +239,7 @@ fun MobileNumberScreen(
                 ) {
                     Text(
                         text = stringResource(id = R.string.send_otp),
-                        color = colorResource(id = R.color.white),
+                        color = Color.White,
                         modifier = Modifier
                             .padding(vertical = 8.dp)
                     )

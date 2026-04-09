@@ -23,7 +23,7 @@ class FirebaseMessageManager @Inject constructor() {
     private var listeningUserId: String? = null
 
     init {
-        Log.d(TAG, "FirebaseMessageManager init, DB URL: ${database.reference.toString()}")
+        Log.d(TAG, "FirebaseMessageManager init, DB URL: ${database.reference}")
         // Quick write test to verify RTDB is reachable
         database.getReference("_test_ping").setValue(System.currentTimeMillis())
             .addOnSuccessListener { Log.d(TAG, "RTDB WRITE TEST: SUCCESS — database is reachable") }

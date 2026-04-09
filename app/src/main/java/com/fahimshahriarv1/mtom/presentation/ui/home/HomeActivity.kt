@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.fahimshahriarv1.mtom.presentation.navgraph.NavGraph
 import com.fahimshahriarv1.mtom.presentation.navgraph.Route
 import com.fahimshahriarv1.mtom.presentation.ui.base.BaseActivity
+import com.fahimshahriarv1.mtom.presentation.ui.theme.MtoMTheme
 
 class HomeActivity : BaseActivity() {
 
@@ -22,7 +23,9 @@ class HomeActivity : BaseActivity() {
         hideSystemUI()
         requestNotificationPermission()
         setContent {
-            NavGraph(startDest = Route.AppMain.route)
+            MtoMTheme {
+                NavGraph(startDest = Route.AppMain.route)
+            }
         }
     }
 

@@ -247,6 +247,7 @@ fun NavGraph(
                     composeLifeCycleImpl = {
                         ComposableLifeCycleImpl(
                             onPause = {
+                                vm.setOffline()
                                 vm.removeListeners()
                             },
                             onResume = {

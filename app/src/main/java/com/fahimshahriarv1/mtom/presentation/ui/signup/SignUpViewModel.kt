@@ -193,12 +193,13 @@ class SignUpViewModel @Inject constructor(
         client.createUser(
             mobileNumber.value,
             password.value,
-            onSuccess = {
+
+            onSuccess = { token ->
                 firebaseMessageManager.registerUser(mobileNumber.value)
                 viewModelScope.launch {
                     setNameUseCase.saveName(mobileNumber.value)
                     setUnameUseCase.saveUserName(mobileNumber.value)
-                    saveTokenUseCase.saveToken(mobileNumber.value)
+                    saveTokenUseCase.saveToken(token)
 
                     loaderState.value = false
                     onSuccess()

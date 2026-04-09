@@ -12,8 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import com.google.gson.Gson
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import java.security.MessageDigest
 import java.util.Date
 import javax.inject.Inject
 
@@ -63,10 +62,11 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
             }
     }
 
-    fun createUser(mobile: String, pass: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+    fun createUser(mobile: String, pass: String, onSuccess: (String) -> Unit, onFailure: () -> Unit) {
+        val hashedPass = hashPassword(pass)
         val user = UserInfo(
             name = mobile,
-            password = hashPassword(pass),
+            password = hashedPass,
             user_name = mobile,
             status = "online",
             users_connected = listOf("")
@@ -75,7 +75,10 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
         dbRef.document(mobile)
             .set(user)
             .addOnSuccessListener {
-                onSuccess()
+                val token = generateToken(mobile, hashedPass)
+                setLoginToken(mobile, token) {
+                    onSuccess(token)
+                }
             }
             .addOnFailureListener {
                 onFailure()
@@ -120,7 +123,7 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
         onFailure: () -> Unit
     ) {
         dbRef.document(uname)
-            .set(ConnectedList(user), SetOptions.mergeFields(USERS_CONNECTED))
+            .update(USERS_CONNECTED, user)
             .addOnSuccessListener {
                 onSuccess()
             }
@@ -136,10 +139,10 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
             val infoA = gson.fromJson(gson.toJson(docA.data), UserInfo::class.java)
             val listA = (infoA?.users_connected ?: listOf()).toMutableList()
             if (userB !in listA) listA.add(userB)
-            listA.remove("") // clean empty entries
+            listA.remove("")
 
             dbRef.document(userA)
-                .set(ConnectedList(listA), SetOptions.mergeFields(USERS_CONNECTED))
+                .update(USERS_CONNECTED, listA)
                 .addOnSuccessListener {
                     // Now add A to B's list
                     dbRef.document(userB).get().addOnSuccessListener { docB ->
@@ -149,7 +152,7 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
                         listB.remove("")
 
                         dbRef.document(userB)
-                            .set(ConnectedList(listB), SetOptions.mergeFields(USERS_CONNECTED))
+                            .update(USERS_CONNECTED, listB)
                             .addOnSuccessListener { onDone() }
                             .addOnFailureListener { onDone() }
                     }.addOnFailureListener { onDone() }
@@ -252,16 +255,10 @@ class FireBaseClient @Inject constructor(db: FirebaseFirestore) {
 }
 
 fun generateToken(uname: String, pass: String): String {
-    val jwt: String =
-        Jwts.builder()
-            .claim("user_name", uname)
-            .claim("pass", pass.substring(0, 2) + "****")
-            .claim("time", Date().time)
-            .signWith(SignatureAlgorithm.HS256, "secret".toByteArray())
-            .compact()
-    Log.v("JWT token : - ", jwt)
-
-    return jwt
+    val raw = "$uname:${pass.take(2)}****:${Date().time}"
+    val digest = MessageDigest.getInstance("SHA-256")
+    val hash = digest.digest(raw.toByteArray(Charsets.UTF_8))
+    val token = hash.joinToString("") { "%02x".format(it) }
+    Log.v("Token", token)
+    return token
 }
-
-private data class ConnectedList(val users_connected: List<String>)

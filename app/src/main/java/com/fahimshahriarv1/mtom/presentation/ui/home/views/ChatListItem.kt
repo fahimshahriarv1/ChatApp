@@ -79,7 +79,7 @@ fun ChatListItem(
                 Text(
                     text = formatChatTimestamp(timestamp),
                     fontSize = 11.sp,
-                    color = if (hasUnread) colorResource(id = R.color.app_main) else colorResource(id = R.color.gray_light)
+                    color = if (hasUnread) colorResource(id = R.color.black) else colorResource(id = R.color.gray_light)
                 )
                 if (hasUnread) {
                     Spacer(modifier = Modifier.height(4.dp))
@@ -87,12 +87,12 @@ fun ChatListItem(
                         modifier = Modifier
                             .size(20.dp)
                             .clip(CircleShape)
-                            .background(colorResource(id = R.color.app_main)),
+                            .background(colorResource(id = R.color.black)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = if (unreadCount > 99) "99+" else unreadCount.toString(),
-                            color = Color.White,
+                            color = colorResource(id = R.color.white),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold
                         )

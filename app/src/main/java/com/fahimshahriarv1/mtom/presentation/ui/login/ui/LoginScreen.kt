@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,7 +80,7 @@ fun LoginScreen(
                 text = stringResource(id = R.string.login),
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
-                color = colorResource(id = R.color.app_main),
+                color = colorResource(id = R.color.black),
                 fontWeight = FontWeight.Medium
             )
 
@@ -102,7 +103,7 @@ fun LoginScreen(
                     imeAction = ImeAction.Next
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = colorResource(id = R.color.app_main),
+                    focusedBorderColor = colorResource(id = R.color.black),
                     errorBorderColor = colorResource(id = R.color.error),
                     unfocusedBorderColor = colorResource(id = R.color.gray_light)
                 ),
@@ -128,7 +129,7 @@ fun LoginScreen(
                                 Icon(
                                     painter = icon,
                                     contentDescription = "pass toggle icon",
-                                    tint = colorResource(id = R.color.app_main),
+                                    tint = colorResource(id = R.color.black),
                                     modifier = Modifier
                                         .size(20.dp)
                                         .clickable(
@@ -149,7 +150,7 @@ fun LoginScreen(
                         )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colorResource(id = R.color.app_main),
+                        focusedBorderColor = colorResource(id = R.color.black),
                         errorBorderColor = colorResource(id = R.color.error),
                         unfocusedBorderColor = colorResource(id = R.color.gray_light)
                     ),
@@ -181,7 +182,7 @@ fun LoginScreen(
             ) {
                 Text(
                     text = stringResource(id = R.string.login),
-                    color = colorResource(id = R.color.white),
+                    color = Color.White,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                 )
@@ -207,7 +208,7 @@ fun LoginScreen(
                         tag = stringResource(id = R.string.sign_up),
                         styles = TextLinkStyles(
                             SpanStyle(
-                                color = colorResource(id = R.color.app_main),
+                                color = colorResource(id = R.color.black),
                                 fontWeight = FontWeight.SemiBold,
                                 fontStyle = FontStyle.Italic,
                                 fontSize = 16.sp

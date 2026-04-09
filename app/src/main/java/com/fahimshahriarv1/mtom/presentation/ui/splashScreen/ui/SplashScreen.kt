@@ -46,7 +46,7 @@ fun SplashScreen() {
                 text = stringResource(id = R.string.app_name),
                 textAlign = TextAlign.Center,
                 fontSize = 40.sp,
-                color = colorResource(id = R.color.app_main),
+                color = colorResource(id = R.color.black),
                 fontWeight = FontWeight.ExtraBold
             )
         }

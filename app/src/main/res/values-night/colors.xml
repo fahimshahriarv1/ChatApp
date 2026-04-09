@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="app_main">#00A661</color>
-    <color name="white">#1C1E21</color>
-    <color name="black">#E0E0E0</color>
-    <color name="gray_light">#5A5A5A</color>
-    <color name="error">#FA0808</color>
+    <color name="app_main">#2C2C2E</color>
+    <color name="white">#1C1C1E</color>
+    <color name="black">#F2F2F7</color>
+    <color name="gray_light">#AEAEB2</color>
+    <color name="error">#FF453A</color>
     <color name="transparent">#00000000</color>
-    <color name="chat_bg">#121212</color>
-    <color name="sent_bubble">#00A661</color>
-    <color name="received_bubble">#2C2F33</color>
-    <color name="chat_input_bg">#2C2F33</color>
-    <color name="msg_time">#5A5A5A</color>
+    <color name="chat_bg">#000000</color>
+    <color name="sent_bubble">#3A3A3C</color>
+    <color name="received_bubble">#2C2C2E</color>
+    <color name="chat_input_bg">#2C2C2E</color>
+    <color name="msg_time">#AEAEB2</color>
 </resources>

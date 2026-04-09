@@ -40,14 +40,14 @@ fun DefaultNavIconAppAuth(navigateBack: () -> Unit) {
             painter = painterResource(id = R.drawable.ic_arrow_downward_24px),
             contentDescription = "Nav Icon",
             modifier = Modifier.rotate(90f),
-            colorFilter = ColorFilter.tint(color = colorResource(id = R.color.app_main))
+            colorFilter = ColorFilter.tint(color = colorResource(id = R.color.black))
         )
 
         Spacer(modifier = Modifier.width(2.dp))
 
         Text(
             text = stringResource(id = R.string.go_back),
-            color = colorResource(id = R.color.app_main),
+            color = colorResource(id = R.color.black),
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp
         )

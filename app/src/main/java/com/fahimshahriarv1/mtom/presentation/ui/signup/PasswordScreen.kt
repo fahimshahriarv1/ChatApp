@@ -106,7 +106,7 @@ fun PasswordScreen(
                     text = stringResource(id = R.string.enter_password_for_your_account),
                     textAlign = TextAlign.Center,
                     fontSize = 24.sp,
-                    color = colorResource(id = R.color.app_main),
+                    color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.fillMaxWidth(DEFAULT_WIDTH_PERCENT)
                 )
@@ -148,7 +148,7 @@ fun PasswordScreen(
                                     Icon(
                                         painter = icon,
                                         contentDescription = "pass toggle icon",
-                                        tint = colorResource(id = R.color.app_main),
+                                        tint = colorResource(id = R.color.black),
                                         modifier = Modifier
                                             .size(20.dp)
                                             .clickable(
@@ -178,7 +178,7 @@ fun PasswordScreen(
                         textAlign = TextAlign.Center,
                         fontSize = 12.sp,
                         color = if (isPasswordMatched.value)
-                            colorResource(id = R.color.app_main)
+                            colorResource(id = R.color.black)
                         else
                             colorResource(id = R.color.error),
                         fontWeight = FontWeight.Medium,

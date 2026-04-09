@@ -148,6 +148,7 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(colorResource(id = R.color.chat_bg))
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
@@ -165,7 +166,7 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Row(
@@ -193,11 +194,12 @@ fun SettingsScreen(
                         Text(
                             text = name.ifEmpty { "User" },
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp
+                            fontSize = 16.sp,
+                            color = colorResource(id = R.color.black)
                         )
                         Text(
                             text = userName,
-                            color = Color.Gray,
+                            color = colorResource(id = R.color.gray_light),
                             fontSize = 13.sp
                         )
                     }
@@ -210,7 +212,7 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -221,7 +223,8 @@ fun SettingsScreen(
                     Text(
                         text = "Chat Backup",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = colorResource(id = R.color.black)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -231,13 +234,13 @@ fun SettingsScreen(
                         text = "Local Storage",
                         fontWeight = FontWeight.Medium,
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.app_main)
+                        color = colorResource(id = R.color.black)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Save your chat backup as a file on your device.",
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = colorResource(id = R.color.gray_light)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -266,7 +269,7 @@ fun SettingsScreen(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Restore", fontSize = 13.sp, color = colorResource(id = R.color.app_main))
+                            Text("Restore", fontSize = 13.sp, color = colorResource(id = R.color.black))
                         }
                     }
 
@@ -275,12 +278,12 @@ fun SettingsScreen(
                         Text(
                             text = "Last backup: ${formatTimestamp(it)}",
                             fontSize = 11.sp,
-                            color = Color.Gray
+                            color = colorResource(id = R.color.gray_light)
                         )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+                    HorizontalDivider(color = colorResource(id = R.color.gray_light).copy(alpha = 0.3f))
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Google Drive Section
@@ -288,13 +291,13 @@ fun SettingsScreen(
                         text = "Google Drive",
                         fontWeight = FontWeight.Medium,
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.app_main)
+                        color = colorResource(id = R.color.black)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Back up your chats to Google Drive for safe keeping.",
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = colorResource(id = R.color.gray_light)
                     )
 
                     existingAccount?.email?.let { email ->
@@ -302,7 +305,7 @@ fun SettingsScreen(
                         Text(
                             text = "Connected: $email",
                             fontSize = 11.sp,
-                            color = colorResource(id = R.color.app_main)
+                            color = colorResource(id = R.color.black)
                         )
                     }
 
@@ -329,7 +332,7 @@ fun SettingsScreen(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Restore", fontSize = 13.sp, color = colorResource(id = R.color.app_main))
+                            Text("Restore", fontSize = 13.sp, color = colorResource(id = R.color.black))
                         }
                     }
 
@@ -338,7 +341,7 @@ fun SettingsScreen(
                         Text(
                             text = "Last backup: ${formatTimestamp(it)}",
                             fontSize = 11.sp,
-                            color = Color.Gray
+                            color = colorResource(id = R.color.gray_light)
                         )
                     }
                 }
@@ -354,7 +357,7 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFE53935)
+                    containerColor = colorResource(id = R.color.error)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
