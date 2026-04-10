@@ -183,7 +183,7 @@ fun ChatScreen(
                         unfocusedContainerColor = colorResource(id = R.color.chat_input_bg),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = colorResource(id = R.color.app_main)
+                        cursorColor = colorResource(id = R.color.black)
                     ),
                     shape = RoundedCornerShape(24.dp),
                     singleLine = false,

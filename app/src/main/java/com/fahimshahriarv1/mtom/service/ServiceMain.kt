@@ -2,12 +2,14 @@ package com.fahimshahriarv1.mtom.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.R
 import com.fahimshahriarv1.mtom.constants.USER_NAME
 import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
@@ -89,12 +91,29 @@ class ServiceMain : Service() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        val currentUser = firebaseMessageManager.currentUser ?: ""
+        val chatId = generateChatId(currentUser, from)
+
+        val intent = Intent(this, HomeActivity::class.java).apply {
+            putExtra("chat_id", chatId)
+            putExtra("recipient_name", from)
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            from.hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(this, messageChannelId)
             .setSmallIcon(R.drawable.lets_chat)
             .setContentTitle(from)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
             .build()
 
         notificationManager.notify(from.hashCode(), notification)

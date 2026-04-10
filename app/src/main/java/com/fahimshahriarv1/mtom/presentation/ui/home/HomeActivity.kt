@@ -1,11 +1,13 @@
 package com.fahimshahriarv1.mtom.presentation.ui.home
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import com.fahimshahriarv1.mtom.presentation.navgraph.NavGraph
 import com.fahimshahriarv1.mtom.presentation.navgraph.Route
@@ -22,9 +24,16 @@ class HomeActivity : BaseActivity() {
         hideToolbar()
         hideSystemUI()
         requestNotificationPermission()
+        val chatId = intent?.getStringExtra("chat_id")
+        val recipientName = intent?.getStringExtra("recipient_name")
+
         setContent {
             MtoMTheme {
-                NavGraph(startDest = Route.AppMain.route)
+                NavGraph(
+                    startDest = Route.AppMain.route,
+                    chatId = chatId,
+                    recipientName = recipientName
+                )
             }
         }
     }

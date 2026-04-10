@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,9 +43,20 @@ import com.fahimshahriarv1.mtom.presentation.utils.getActivity
 
 @Composable
 fun NavGraph(
-    startDest: String
+    startDest: String,
+    chatId: String? = null,
+    recipientName: String? = null
 ) {
     val navController = rememberNavController()
+    val hasNavigatedToChat = remember { mutableStateOf(false) }
+
+    // Navigate to chat screen if opened from notification
+    LaunchedEffect(chatId, recipientName) {
+        if (!hasNavigatedToChat.value && chatId != null && recipientName != null) {
+            hasNavigatedToChat.value = true
+            navController.navigate(Route.ChatScreen(chatId, recipientName))
+        }
+    }
 
     NavHost(
         navController = navController,

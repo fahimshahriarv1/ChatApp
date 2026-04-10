@@ -21,6 +21,7 @@ class FirebaseMessageManager @Inject constructor() {
     private val database = FirebaseDatabase.getInstance()
     private var listener: ChildEventListener? = null
     private var listeningUserId: String? = null
+    val currentUser: String? get() = listeningUserId
 
     init {
         Log.d(TAG, "FirebaseMessageManager init, DB URL: ${database.reference}")
