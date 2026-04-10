@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Let\'s Chat</string>
+    <string name="app_name">MtoM</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -19,4 +19,8 @@
     <string name="password_cannot_be_empty">Password cannot be empty</string>
     <string name="go_back">Go Back</string>
     <string name="add_user">Add User</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="otp_sent_to">OTP sent to %1$s</string>
+    <string name="resend_in">Resend in %1$ds</string>
 </resources>

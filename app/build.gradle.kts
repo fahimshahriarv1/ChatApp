@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -8,6 +9,7 @@ plugins {
     kotlin("kapt")
     kotlin("android")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
 }
@@ -17,20 +19,27 @@ android {
     val df = SimpleDateFormat("dd-MMM-yyyy HH-mm-ss a", Locale.US)
     val buildDate = df.format(c.time)
 
-    namespace = "com.example.chatappstarting"
-    compileSdk = 34
+    namespace = "com.fahimshahriarv1.mtom"
+    compileSdk = 36
+
+    val localProps = Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) load(file.inputStream())
+    }
 
     defaultConfig {
-        applicationId = "com.example.chatappstarting"
+        applicationId = "com.fahimshahriarv1.mtom"
         minSdk = 23
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 101
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "E2EE_SECRET", "\"${localProps.getProperty("E2EE_SECRET", "")}\"")
     }
 
     buildTypes {
@@ -57,7 +66,7 @@ android {
                 this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val variantName: String = variantOutputImpl.name
             val outputFileName =
-                "[$variantName]LetsChat - ${defaultConfig.versionName}-(${defaultConfig.versionCode})-$buildDate-.apk"
+                "[$variantName]MtoM - ${defaultConfig.versionName}-(${defaultConfig.versionCode})-$buildDate-.apk"
             variantOutputImpl.outputFileName = outputFileName
         }
     }
@@ -73,7 +82,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
@@ -92,8 +101,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -120,14 +127,6 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.room:room-rxjava2:2.6.1")
-
-    //Ktor
-    implementation("io.ktor:ktor-client-core:2.3.1")
-    implementation("io.ktor:ktor-client-android:2.3.1")
-    implementation("io.ktor:ktor-client-gson:2.3.1")
-    implementation("io.ktor:ktor-serialization-gson:2.3.1")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
 
     //firebaseAuth
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
@@ -136,9 +135,24 @@ dependencies {
     //firebaseCore
     implementation("com.google.firebase:firebase-analytics")
 
+    //Crashlytics
+    implementation("com.google.firebase:firebase-crashlytics")
+
     //gson
     implementation("com.google.code.gson:gson:2.11.0")
 
-    //jwt
-    implementation("io.jsonwebtoken:jjwt:0.7.0")
+    //Firebase Realtime Database
+    implementation("com.google.firebase:firebase-database")
+
+    //Google Sign-In & Drive API
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.api-client:google-api-client-android:2.2.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation("com.google.apis:google-api-services-drive:v3-rev20231128-2.0.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation("com.google.http-client:google-http-client-gson:1.43.3") {
+        exclude(group = "org.apache.httpcomponents")
+    }
 }

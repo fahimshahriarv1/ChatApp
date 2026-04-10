@@ -12,10 +12,26 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve line number information for Crashlytics stack traces
+-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep original source file name (not obfuscated) for Crashlytics
+-renamesourcefileattribute SourceFile
+
+# R8 missing class suppressions
+-dontwarn java.beans.ConstructorProperties
+-dontwarn java.beans.Transient
+-dontwarn javax.xml.bind.DatatypeConverter
+-dontwarn org.bouncycastle.**
+
+# Gson — keep model classes and Gson internals for reflection
+-keep class com.fahimshahriarv1.mtom.data.room.model.** { *; }
+-keep class com.fahimshahriarv1.mtom.data.backup.** { *; }
+-keep class com.google.gson.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
+
+# Google Drive API
+-keep class com.google.api.services.drive.** { *; }
+-keep class com.google.api.client.** { *; }
+-dontwarn com.google.api.client.http.apache.v2.**

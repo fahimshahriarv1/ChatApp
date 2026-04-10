@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission
@@ -17,7 +18,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".LetsChatApplication"
+        android:name=".MtoMApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -44,12 +45,20 @@
             android:name=".presentation.ui.home.HomeActivity"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.ChatAppStarting" />
+            android:theme="@style/Theme.MtoM" />
 
         <service
             android:name=".service.ServiceMain"
-            android:foregroundServiceType="shortService">
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Persistent XMPP messaging connection" />
         </service>
+
+        <receiver
+            android:name=".service.ReplyReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>
