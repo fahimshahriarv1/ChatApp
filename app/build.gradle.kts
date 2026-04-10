@@ -6,12 +6,12 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
-    kotlin("kapt")
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId = "com.fahimshahriarv1.mtom"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 101
         versionName = "1.0.1"
 
@@ -74,15 +74,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
@@ -119,14 +118,14 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     //Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.49")
-    kapt("com.google.dagger:hilt-compiler:2.49")
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    ksp("com.google.dagger:hilt-compiler:2.56.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // ... Room Database
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.7.1")
+    ksp("androidx.room:room-compiler:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
 
     //firebaseAuth
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
