@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.R
@@ -37,6 +38,9 @@ class ServiceMain : Service() {
 
     @Inject
     lateinit var chatRepository: ChatRepository
+
+    // Track message history per sender for stacked notifications
+    private val messageHistory = mutableMapOf<String, MutableList<NotificationCompat.MessagingStyle.Message>>()
 
     override fun onCreate() {
         super.onCreate()
@@ -95,6 +99,18 @@ class ServiceMain : Service() {
         val currentUser = firebaseMessageManager.currentUser ?: ""
         val chatId = generateChatId(currentUser, from)
 
+        // Accumulate messages per sender
+        val sender = Person.Builder().setName(from).build()
+        val newMessage = NotificationCompat.MessagingStyle.Message(
+            body, System.currentTimeMillis(), sender
+        )
+        val messages = messageHistory.getOrPut(from) { mutableListOf() }
+        messages.add(newMessage)
+
+        val self = Person.Builder().setName("You").build()
+        val style = NotificationCompat.MessagingStyle(self)
+        messages.forEach { style.addMessage(it) }
+
         val intent = Intent(this, HomeActivity::class.java).apply {
             putExtra("chat_id", chatId)
             putExtra("recipient_name", from)
@@ -134,12 +150,12 @@ class ServiceMain : Service() {
 
         val notification = NotificationCompat.Builder(this, messageChannelId)
             .setSmallIcon(R.drawable.lets_chat)
-            .setContentTitle(from)
-            .setContentText(body)
+            .setStyle(style)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .addAction(replyAction)
+            .setNumber(messages.size)
             .build()
 
         notificationManager.notify(from.hashCode(), notification)
