@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.RemoteInput
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.R
 import com.fahimshahriarv1.mtom.constants.USER_NAME
@@ -107,6 +108,30 @@ class ServiceMain : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Inline reply action
+        val remoteInput = RemoteInput.Builder(ReplyReceiver.KEY_REPLY)
+            .setLabel("Reply")
+            .build()
+
+        val replyIntent = Intent(this, ReplyReceiver::class.java).apply {
+            putExtra("recipient_name", from)
+            putExtra("current_user", currentUser)
+            putExtra("notification_id", from.hashCode())
+        }
+
+        val replyPendingIntent = PendingIntent.getBroadcast(
+            this,
+            from.hashCode(),
+            replyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+
+        val replyAction = NotificationCompat.Action.Builder(
+            R.drawable.lets_chat,
+            "Reply",
+            replyPendingIntent
+        ).addRemoteInput(remoteInput).build()
+
         val notification = NotificationCompat.Builder(this, messageChannelId)
             .setSmallIcon(R.drawable.lets_chat)
             .setContentTitle(from)
@@ -114,6 +139,7 @@ class ServiceMain : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+            .addAction(replyAction)
             .build()
 
         notificationManager.notify(from.hashCode(), notification)
