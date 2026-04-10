@@ -5,6 +5,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,7 +48,7 @@ class FirebaseMessageManager @Inject constructor() {
         val msgData = mapOf(
             "senderId" to senderId,
             "message" to message,
-            "timestamp" to System.currentTimeMillis()
+            "timestamp" to ServerValue.TIMESTAMP
         )
 
         val ref = database.getReference(MESSAGES_PATH).child(recipientId).push()
