@@ -3,6 +3,7 @@ package com.fahimshahriarv1.mtom.presentation.navgraph
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -226,6 +227,10 @@ fun NavGraph(
             composable(route = Route.HomeScreen.route) {
                 val vm: HomeViewModel = hiltViewModel()
                 val context = LocalContext.current
+
+                BackHandler {
+                    (context as? Activity)?.finish()
+                }
 
                 val list by vm.userList.collectAsStateWithLifecycle(initialValue = listOf())
                 val name by vm.name.collectAsStateWithLifecycle(initialValue = "")
