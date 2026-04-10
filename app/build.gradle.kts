@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -19,7 +20,12 @@ android {
     val buildDate = df.format(c.time)
 
     namespace = "com.fahimshahriarv1.mtom"
-    compileSdk = 34
+    compileSdk = 36
+
+    val localProps = Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) load(file.inputStream())
+    }
 
     defaultConfig {
         applicationId = "com.fahimshahriarv1.mtom"
@@ -32,6 +38,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "E2EE_SECRET", "\"${localProps.getProperty("E2EE_SECRET", "")}\"")
     }
 
     buildTypes {

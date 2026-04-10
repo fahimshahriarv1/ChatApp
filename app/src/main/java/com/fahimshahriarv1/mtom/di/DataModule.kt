@@ -1,6 +1,7 @@
 package com.fahimshahriarv1.mtom.di
 
 import android.app.Application
+import com.fahimshahriarv1.mtom.data.crypto.CryptoManager
 import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
 import com.fahimshahriarv1.mtom.data.repository.ChatRepositoryImpl
 import com.fahimshahriarv1.mtom.data.repository.LocalDatabaseRepositoryImpl
@@ -56,10 +57,12 @@ object DataModule {
     @Singleton
     fun provideChatRepository(
         db: LocalDatabase,
-        firebaseMessageManager: FirebaseMessageManager
+        firebaseMessageManager: FirebaseMessageManager,
+        cryptoManager: CryptoManager
     ): ChatRepository = ChatRepositoryImpl(
         messageInfoDao = db.getMessageInfo(),
         chatUserDao = db.getUserList(),
-        firebaseMessageManager = firebaseMessageManager
+        firebaseMessageManager = firebaseMessageManager,
+        cryptoManager = cryptoManager
     )
 }

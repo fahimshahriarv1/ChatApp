@@ -1,5 +1,7 @@
 package com.fahimshahriarv1.mtom.data.repository
 
+import android.util.Log
+import com.fahimshahriarv1.mtom.data.crypto.CryptoManager
 import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
 import com.fahimshahriarv1.mtom.data.room.ChatUserDao
 import com.fahimshahriarv1.mtom.data.room.MessageInfoDao
@@ -14,7 +16,8 @@ import kotlin.coroutines.resume
 class ChatRepositoryImpl(
     private val messageInfoDao: MessageInfoDao,
     private val chatUserDao: ChatUserDao,
-    private val firebaseMessageManager: FirebaseMessageManager
+    private val firebaseMessageManager: FirebaseMessageManager,
+    private val cryptoManager: CryptoManager
 ) : ChatRepository {
 
     override fun getMessagesForChat(chatId: String): Flow<List<MessageInfoEntity>> {
@@ -58,9 +61,14 @@ class ChatRepositoryImpl(
             )
         )
 
-        // Send via Firebase RTDB
+        // Encrypt message + timestamp together before sending via Firebase RTDB
+        val key = cryptoManager.deriveConversationKey(senderId, recipientId)
+        val payload = "$message|$timestamp"
+        val encryptedMessage = cryptoManager.encrypt(payload, key)
+        Log.d("E2EE", "Encrypted message+timestamp for $recipientId")
+
         val result = suspendCancellableCoroutine { cont ->
-            firebaseMessageManager.sendMessage(recipientId, senderId, message) { result ->
+            firebaseMessageManager.sendMessage(recipientId, senderId, encryptedMessage) { result ->
                 cont.resume(result)
             }
         }
@@ -76,13 +84,25 @@ class ChatRepositoryImpl(
         message: String,
         timestamp: Long
     ) {
-        val ts = timestamp.toString()
+        // Decrypt incoming payload (message|timestamp)
+        val currentUser = chatId.split("_").first { it != senderId }
+        val (decryptedMessage, ts) = try {
+            val key = cryptoManager.deriveConversationKey(senderId, currentUser)
+            val payload = cryptoManager.decrypt(message, key)
+            val parts = payload.split("|", limit = 2)
+            Log.d("E2EE", "Decrypted message+timestamp from $senderId")
+            parts[0] to (if (parts.size > 1) parts[1] else timestamp.toString())
+        } catch (e: Exception) {
+            Log.e("E2EE", "Decryption failed, using raw message: ${e.message}")
+            message to timestamp.toString()
+        }
+
         val messageId = UUID.randomUUID().toString()
 
         val messageEntity = MessageInfoEntity(
             timeStamp = ts,
             chatId = chatId,
-            message = message,
+            message = decryptedMessage,
             senderId = senderId,
             messageId = messageId,
             messageStatus = "received",
@@ -96,7 +116,7 @@ class ChatRepositoryImpl(
             ChatUserEntity(
                 chatId = chatId,
                 timeStamp = ts,
-                message = message,
+                message = decryptedMessage,
                 senderId = senderId,
                 messageId = messageId,
                 messageStatus = "received"

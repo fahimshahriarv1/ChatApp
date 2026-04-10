@@ -14,6 +14,7 @@ import androidx.core.app.RemoteInput
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.R
 import com.fahimshahriarv1.mtom.constants.USER_NAME
+import com.fahimshahriarv1.mtom.data.crypto.CryptoManager
 import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
 import com.fahimshahriarv1.mtom.domain.repository.ChatRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +39,9 @@ class ServiceMain : Service() {
 
     @Inject
     lateinit var chatRepository: ChatRepository
+
+    @Inject
+    lateinit var cryptoManager: CryptoManager
 
     // Track message history per sender for stacked notifications
     private val messageHistory = mutableMapOf<String, MutableList<NotificationCompat.MessagingStyle.Message>>()
@@ -80,7 +84,16 @@ class ServiceMain : Service() {
             serviceScope.launch {
                 val chatId = generateChatId(currentUser, senderId)
                 chatRepository.saveIncomingMessage(chatId, senderId, message, timestamp)
-                showMessageNotification(senderId, message)
+
+                // Decrypt for notification display
+                val displayMessage = try {
+                    val key = cryptoManager.deriveConversationKey(senderId, currentUser)
+                    val payload = cryptoManager.decrypt(message, key)
+                    payload.split("|", limit = 2)[0]
+                } catch (e: Exception) {
+                    message // Fallback for unencrypted messages
+                }
+                showMessageNotification(senderId, displayMessage)
             }
         }
         Log.d(TAG, "Firebase listener started for $currentUser")
