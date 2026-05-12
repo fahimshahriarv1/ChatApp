@@ -126,6 +126,51 @@ class ChatRepositoryImpl(
         chatUserDao.incrementUnreadCount(chatId)
     }
 
+    override suspend fun saveSyncedSentMessage(
+        chatId: String,
+        senderId: String,
+        recipientId: String,
+        message: String,
+        timestamp: Long
+    ) {
+        val (decryptedMessage, ts) = try {
+            val key = cryptoManager.deriveConversationKey(senderId, recipientId)
+            val payload = cryptoManager.decrypt(message, key)
+            val parts = payload.split("|", limit = 2)
+            Log.d("E2EE", "Decrypted synced sent message")
+            parts[0] to (if (parts.size > 1) parts[1] else timestamp.toString())
+        } catch (e: Exception) {
+            Log.e("E2EE", "Decrypt failed for synced sent message: ${e.message}")
+            message to timestamp.toString()
+        }
+
+        val messageId = UUID.randomUUID().toString()
+
+        messageInfoDao.insertNewMessage(
+            MessageInfoEntity(
+                timeStamp = ts,
+                chatId = chatId,
+                message = decryptedMessage,
+                senderId = senderId,
+                messageId = messageId,
+                messageStatus = "sent",
+                previousMessageSenderId = "",
+                previousMessageId = ""
+            )
+        )
+
+        chatUserDao.insertNewChatUser(
+            ChatUserEntity(
+                chatId = chatId,
+                timeStamp = ts,
+                message = decryptedMessage,
+                senderId = senderId,
+                messageId = messageId,
+                messageStatus = "sent"
+            )
+        )
+    }
+
     override suspend fun resetUnreadCount(chatId: String) {
         chatUserDao.resetUnreadCount(chatId)
     }
