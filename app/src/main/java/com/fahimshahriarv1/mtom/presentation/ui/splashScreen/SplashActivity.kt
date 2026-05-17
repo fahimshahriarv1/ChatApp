@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import com.fahimshahriarv1.mtom.R
 import com.fahimshahriarv1.mtom.presentation.navgraph.NavGraph
 import com.fahimshahriarv1.mtom.presentation.navgraph.Route
@@ -26,7 +27,11 @@ class SplashActivity : BaseActivity() {
         setContent {
             MtoMTheme {
                 when (viewModel.startDest.value) {
-                    Route.AppMain.route -> gotoHome()
+                    Route.AppMain.route -> {
+                        LaunchedEffect(Unit) {
+                            gotoHome()
+                        }
+                    }
                     Route.AppAuth.route -> NavGraph(startDest = Route.AppAuth.route)
                     else -> SplashScreen()
                 }
@@ -37,5 +42,6 @@ class SplashActivity : BaseActivity() {
     private fun gotoHome() {
         val i = Intent(this, HomeActivity::class.java)
         startActivity(i)
+        finish()
     }
 }
