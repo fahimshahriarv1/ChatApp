@@ -9,5 +9,6 @@ interface ChatRepository {
     fun getChatList(): Flow<List<ChatUserEntity>>
     suspend fun sendMessage(chatId: String, recipientId: String, senderId: String, message: String)
     suspend fun saveIncomingMessage(chatId: String, senderId: String, message: String, timestamp: Long)
+    suspend fun saveSyncedSentMessage(chatId: String, senderId: String, recipientId: String, message: String, timestamp: Long)
     suspend fun resetUnreadCount(chatId: String)
 }

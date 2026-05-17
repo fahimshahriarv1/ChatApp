@@ -80,8 +80,22 @@ class ServiceMain : Service() {
     }
 
     private fun setupMessageListener(currentUser: String) {
-        firebaseMessageManager.startListening(currentUser) { senderId, message, timestamp ->
+        firebaseMessageManager.startListening(currentUser) { senderId, message, timestamp, isEcho, recipientId, sid ->
             serviceScope.launch {
+                if (isEcho) {
+                    // Skip echoes from this same session (we already have them locally)
+                    if (sid == firebaseMessageManager.sessionId) {
+                        Log.d(TAG, "Skipping own echo (same session)")
+                        return@launch
+                    }
+                    // Echo from another device — save as sent message
+                    val echoRecipient = recipientId ?: return@launch
+                    val chatId = generateChatId(currentUser, echoRecipient)
+                    chatRepository.saveSyncedSentMessage(chatId, senderId, echoRecipient, message, timestamp)
+                    Log.d(TAG, "Saved synced sent message from another device to $echoRecipient")
+                    return@launch
+                }
+
                 val chatId = generateChatId(currentUser, senderId)
                 chatRepository.saveIncomingMessage(chatId, senderId, message, timestamp)
 
@@ -90,7 +104,7 @@ class ServiceMain : Service() {
                     val key = cryptoManager.deriveConversationKey(senderId, currentUser)
                     val payload = cryptoManager.decrypt(message, key)
                     payload.split("|", limit = 2)[0]
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     message // Fallback for unencrypted messages
                 }
                 showMessageNotification(senderId, displayMessage)

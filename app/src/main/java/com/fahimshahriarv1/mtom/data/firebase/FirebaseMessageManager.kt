@@ -23,6 +23,7 @@ class FirebaseMessageManager @Inject constructor() {
     private var listener: ChildEventListener? = null
     private var listeningUserId: String? = null
     val currentUser: String? get() = listeningUserId
+    val sessionId: String = java.util.UUID.randomUUID().toString()
 
     init {
         Log.d(TAG, "FirebaseMessageManager init, DB URL: ${database.reference}")
@@ -57,6 +58,20 @@ class FirebaseMessageManager @Inject constructor() {
         ref.setValue(msgData)
             .addOnSuccessListener {
                 Log.d(TAG, "SEND OK to $recipientId: $message")
+
+                // Push echo to sender's own path for cross-device sync
+                val echoData = mapOf(
+                    "senderId" to senderId,
+                    "message" to message,
+                    "timestamp" to ServerValue.TIMESTAMP,
+                    "echo" to true,
+                    "recipientId" to recipientId,
+                    "sid" to sessionId
+                )
+                database.getReference(MESSAGES_PATH).child(senderId).push().setValue(echoData)
+                    .addOnSuccessListener { Log.d(TAG, "Echo pushed for cross-device sync") }
+                    .addOnFailureListener { Log.w(TAG, "Echo push failed: ${it.message}") }
+
                 onResult(Result.success(Unit))
             }
             .addOnFailureListener { e ->
@@ -68,7 +83,7 @@ class FirebaseMessageManager @Inject constructor() {
 
     fun startListening(
         userId: String,
-        onMessageReceived: (senderId: String, message: String, timestamp: Long) -> Unit
+        onMessageReceived: (senderId: String, message: String, timestamp: Long, isEcho: Boolean, recipientId: String?, sid: String?) -> Unit
     ) {
         // Don't double-listen
         if (listeningUserId == userId && listener != null) {
@@ -100,14 +115,18 @@ class FirebaseMessageManager @Inject constructor() {
                 val message = snapshot.child("message").getValue(String::class.java)
                 val timestamp = snapshot.child("timestamp").getValue(Long::class.java) ?: System.currentTimeMillis()
 
+                val isEcho = snapshot.child("echo").getValue(Boolean::class.java) ?: false
+                val recipientId = snapshot.child("recipientId").getValue(String::class.java)
+                val sid = snapshot.child("sid").getValue(String::class.java)
+
                 if (senderId == null || message == null) {
                     Log.e(TAG, "Invalid message data: senderId=$senderId, message=$message")
                     snapshot.ref.removeValue()
                     return
                 }
 
-                Log.d(TAG, ">>> RECEIVED from $senderId: $message")
-                onMessageReceived(senderId, message, timestamp)
+                Log.d(TAG, ">>> RECEIVED from $senderId: $message (echo=$isEcho)")
+                onMessageReceived(senderId, message, timestamp, isEcho, recipientId, sid)
 
                 // Delete after processing — Firebase is just a relay
                 snapshot.ref.removeValue()
