@@ -31,8 +31,8 @@ android {
         applicationId = "com.fahimshahriarv1.mtom"
         minSdk = 23
         targetSdk = 36
-        versionCode = 103
-        versionName = "1.0.3"
+        versionCode = 104
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
