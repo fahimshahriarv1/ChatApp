@@ -51,12 +51,20 @@ class LoginViewModel @Inject constructor(
             onWrongPassword = {
                 loaderState.value = false
                 showToast("Username or password invalid")
+            },
+            onFailure = { e ->
+                loaderState.value = false
+                showToast("Could not reach server: ${e.message}")
             }
         )
     }
 
     fun onSignUpClicked() {
         navigateTo(Route.AppSignUp.route)
+    }
+
+    fun onForgotPasswordClicked() {
+        navigateTo(Route.AppForgotPassword.route)
     }
 
     private fun onLoginSuccess(user: UserInformation, onSuccess: () -> Unit) {
