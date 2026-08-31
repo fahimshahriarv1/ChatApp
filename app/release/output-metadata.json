@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 103,
-      "versionName": "1.0.3",
-      "outputFile": "[release]MtoM - 1.0.3-(103)-10-Apr-2026 22-08-36 PM-.apk"
+      "versionCode": 104,
+      "versionName": "1.0.4",
+      "outputFile": "[release]MtoM - 1.0.4-(104)-17-May-2026 22-12-03 PM-.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/[release]MtoM - 1.0.3-(103)-10-Apr-2026 22-08-36 PM-.dm"
+        "baselineProfiles/1/[release]MtoM - 1.0.4-(104)-17-May-2026 22-12-03 PM-.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/[release]MtoM - 1.0.3-(103)-10-Apr-2026 22-08-36 PM-.dm"
+        "baselineProfiles/0/[release]MtoM - 1.0.4-(104)-17-May-2026 22-12-03 PM-.dm"
       ]
     }
   ],
