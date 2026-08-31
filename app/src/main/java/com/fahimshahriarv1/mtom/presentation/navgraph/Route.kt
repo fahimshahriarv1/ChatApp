@@ -14,6 +14,7 @@ sealed class Route(
 
     object AppAuth : Route(route = "appAuth")
     object AppSignUp : Route(route = "appSignUp")
+    object AppForgotPassword : Route(route = "appForgotPassword")
     object AppMain : Route(route = "appMain")
     object HomeScreen : Route(route = "homeScreen")
     object LoginScreen : Route(route = "loginScreen")
@@ -25,6 +26,17 @@ sealed class Route(
 
     object SignUpPasswordScreen :
         Route(route = "signUpPasswordScreen", MOBILE_NUMBER) {
+        operator fun invoke(mobileNumber: String) =
+            route.appendParams(MOBILE_NUMBER to mobileNumber)
+    }
+
+    object ForgotPasswordMobileScreen : Route(route = "forgotPasswordMobileScreen")
+    object ForgotPasswordOtpScreen : Route(route = "forgotPasswordOtpScreen", MOBILE_NUMBER) {
+        operator fun invoke(mobileNumber: String) =
+            route.appendParams(MOBILE_NUMBER to mobileNumber)
+    }
+
+    object ResetPasswordScreen : Route(route = "resetPasswordScreen", MOBILE_NUMBER) {
         operator fun invoke(mobileNumber: String) =
             route.appendParams(MOBILE_NUMBER to mobileNumber)
     }
