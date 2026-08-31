@@ -23,4 +23,11 @@
     <string name="resend_otp">Resend OTP</string>
     <string name="otp_sent_to">OTP sent to %1$s</string>
     <string name="resend_in">Resend in %1$ds</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="enter_registered_mobile_number">Enter your registered mobile number</string>
+    <string name="set_new_password">Set your new password</string>
+    <string name="new_password">New password</string>
+    <string name="re_enter_new_password">Re enter new password</string>
+    <string name="password_reset_successful">Password reset successful, please login</string>
 </resources>
