@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -19,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.fahimshahriarv1.mtom.R
 import com.fahimshahriarv1.mtom.constants.MOBILE_NUMBER
 import com.fahimshahriarv1.mtom.data.room.model.Argument
 import com.fahimshahriarv1.mtom.presentation.ui.base.BaseComposable
@@ -29,6 +31,7 @@ import com.fahimshahriarv1.mtom.presentation.ui.home.HomeActivity
 import com.fahimshahriarv1.mtom.presentation.ui.home.HomeViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.chat.ChatScreen
 import com.fahimshahriarv1.mtom.presentation.ui.chat.ChatViewModel
+import com.fahimshahriarv1.mtom.presentation.ui.forgotpassword.ForgotPasswordViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.home.views.HomeScreen
 import com.fahimshahriarv1.mtom.presentation.ui.login.LoginViewModel
 import com.fahimshahriarv1.mtom.presentation.ui.login.ui.LoginScreen
@@ -80,7 +83,8 @@ fun NavGraph(
                             unameChanged = vm::onUnameChanged,
                             passChanged = vm::onPassChanged,
                             onLoginClicked = { vm.onLoginClicked { gotoHome(context) } },
-                            onSignUpClicked = vm::onSignUpClicked
+                            onSignUpClicked = vm::onSignUpClicked,
+                            onForgotPasswordClicked = vm::onForgotPasswordClicked
                         )
                     },
                     navController = navController,
@@ -205,6 +209,146 @@ fun NavGraph(
                             onPasswordValueChanged = vm::onPasswordChanged,
                             onReEnterPasswordValueChanged = vm::onReEnterPasswordChanged,
                             onOkClicked = { vm.onPasswordOkClicked { gotoHome(context) } },
+                            navigateBack = { navController.navigateUp() }
+                        )
+                    },
+                    navController = navController,
+                    navChannel = vm.navChannel
+                )
+
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
+                    }
+                }
+            }
+        }
+
+        navigation(
+            route = Route.AppForgotPassword.route,
+            startDestination = Route.ForgotPasswordMobileScreen.route
+        ) {
+            composable(route = Route.ForgotPasswordMobileScreen.route) {
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Route.AppForgotPassword.route)
+                }
+                val vm: ForgotPasswordViewModel = hiltViewModel(parentEntry)
+
+                BaseComposable(
+                    composable = {
+                        MobileNumberScreen(
+                            countryCode = vm.countryCode,
+                            mobileNumber = vm.mobileNumber,
+                            isError = vm.isMobileNumberError,
+                            isLoading = vm.loaderState.value,
+                            title = stringResource(id = R.string.enter_registered_mobile_number),
+                            onCountryCodeClicked = vm::onCountryCodeSelected,
+                            mobileNumberChanged = vm::onMobileNumberChanged,
+                            onSendOtpClicked = {
+                                vm.checkUserExist {
+                                    navController.navigate(
+                                        Route.ForgotPasswordOtpScreen(mobileNumber = vm.mobileNumber.value)
+                                    )
+                                }
+                            },
+                            navigateBack = {
+                                navController.navigateUp()
+                            }
+                        )
+                    },
+                    navController = navController,
+                    navChannel = vm.navChannel
+                )
+
+                val context = LocalContext.current
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
+                    }
+                }
+            }
+
+            composable(
+                route = Route.ForgotPasswordOtpScreen.route + "/{$MOBILE_NUMBER}",
+                arguments = listOf(navArgument(MOBILE_NUMBER) {
+                    type = NavType.StringType
+                    nullable = true
+                })
+            ) {
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Route.AppForgotPassword.route)
+                }
+                val vm: ForgotPasswordViewModel = hiltViewModel(parentEntry)
+                val activity = LocalContext.current as Activity
+
+                LaunchedEffect(Unit) {
+                    vm.sendOtp(activity)
+                }
+
+                BaseComposable(
+                    composable = {
+                        OtpVerificationScreen(
+                            otp = vm.otp,
+                            isLoading = vm.loaderState.value,
+                            phoneNumber = vm.getFullPhoneNumber(),
+                            resendTimer = vm.resendTimer,
+                            onOtpValueChanged = vm::onOtpChanged,
+                            navigateBack = {
+                                vm.resetOtpState()
+                                navController.navigateUp()
+                            },
+                            onVerifyClicked = vm::verifyOtp,
+                            onResendClicked = { vm.resendOtp(activity) }
+                        )
+                    },
+                    navController = navController,
+                    navChannel = vm.navChannel
+                )
+
+                val context = LocalContext.current
+                FlowObserver(flow = vm.showToast) {
+                    if (it != null) {
+                        showToastMessage(it, context)
+                    }
+                }
+            }
+
+            composable(
+                route = Route.ResetPasswordScreen.route + "/{$MOBILE_NUMBER}",
+                arguments = listOf(navArgument(MOBILE_NUMBER) {
+                    type = NavType.StringType
+                    nullable = true
+                })
+            ) {
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Route.AppForgotPassword.route)
+                }
+                val vm: ForgotPasswordViewModel = hiltViewModel(parentEntry)
+                val context = LocalContext.current
+                val successMessage = stringResource(id = R.string.password_reset_successful)
+
+                BaseComposable(
+                    composable = {
+                        PasswordScreen(
+                            passwordValue = vm.password,
+                            reEnterPasswordValue = vm.reEnterPassword,
+                            isPasswordMatched = vm.isPasswordMatched,
+                            isLoading = vm.loaderState.value,
+                            title = stringResource(id = R.string.set_new_password),
+                            passwordLabel = stringResource(id = R.string.new_password),
+                            reEnterPasswordLabel = stringResource(id = R.string.re_enter_new_password),
+                            buttonText = stringResource(id = R.string.reset_password),
+                            onPasswordValueChanged = vm::onPasswordChanged,
+                            onReEnterPasswordValueChanged = vm::onReEnterPasswordChanged,
+                            onOkClicked = {
+                                vm.onResetPasswordClicked {
+                                    showToastMessage(successMessage, context)
+                                    navController.popBackStack(
+                                        Route.AppForgotPassword.route,
+                                        inclusive = true
+                                    )
+                                }
+                            },
                             navigateBack = { navController.navigateUp() }
                         )
                     },
