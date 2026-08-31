@@ -59,6 +59,10 @@ fun PasswordScreen(
     reEnterPasswordValue: State<String> = mutableStateOf(""),
     isPasswordMatched: State<Boolean> = mutableStateOf(true),
     isLoading: Boolean = false,
+    title: String = stringResource(id = R.string.enter_password_for_your_account),
+    passwordLabel: String = stringResource(id = R.string.enter_password),
+    reEnterPasswordLabel: String = stringResource(id = R.string.re_enter_password),
+    buttonText: String = stringResource(id = R.string.ok),
     onPasswordValueChanged: (String) -> Unit = {},
     onReEnterPasswordValueChanged: (String) -> Unit = {},
     onOkClicked: () -> Unit = {},
@@ -103,7 +107,7 @@ fun PasswordScreen(
             ) {
 
                 Text(
-                    text = stringResource(id = R.string.enter_password_for_your_account),
+                    text = title,
                     textAlign = TextAlign.Center,
                     fontSize = 24.sp,
                     color = colorResource(id = R.color.black),
@@ -116,7 +120,7 @@ fun PasswordScreen(
                     DefaultOutlinedTextField(
                         value = passwordValue.value,
                         onValueChange = onPasswordValueChanged,
-                        labelString = stringResource(id = R.string.enter_password),
+                        labelString = passwordLabel,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Next
@@ -135,7 +139,7 @@ fun PasswordScreen(
                             showWarningText.value = true
                         },
                         isError = !isPasswordMatched.value,
-                        labelString = stringResource(id = R.string.re_enter_password),
+                        labelString = reEnterPasswordLabel,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Next
@@ -187,7 +191,7 @@ fun PasswordScreen(
             }
 
             DefaultButton(
-                buttonTxt = stringResource(id = R.string.ok),
+                buttonTxt = buttonText,
                 oncClick = {
                     onOkClicked()
                     showWarningText.value = true
