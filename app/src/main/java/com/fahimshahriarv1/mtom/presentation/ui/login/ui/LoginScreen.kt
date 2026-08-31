@@ -59,7 +59,8 @@ fun LoginScreen(
     unameChanged: (String) -> Unit = {},
     passChanged: (String) -> Unit = {},
     onLoginClicked: () -> Unit = {},
-    onSignUpClicked: () -> Unit = {}
+    onSignUpClicked: () -> Unit = {},
+    onForgotPasswordClicked: () -> Unit = {}
 ) {
     val isPassVisible = remember {
         mutableStateOf(false)
@@ -166,6 +167,23 @@ fun LoginScreen(
                         .padding(horizontal = 30.dp)
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.forgot_password),
+                color = colorResource(id = R.color.black),
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onForgotPasswordClicked() }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
