@@ -7,6 +7,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.fahimshahriarv1.mtom.data.firebase.FireBaseClient
+import com.fahimshahriarv1.mtom.data.firebase.logApiError
+import com.fahimshahriarv1.mtom.data.firebase.logApiRequest
+import com.fahimshahriarv1.mtom.data.firebase.logApiResponse
 import com.fahimshahriarv1.mtom.data.firebase.FirebaseMessageManager
 import com.fahimshahriarv1.mtom.domain.usecases.SaveNameUseCase
 import com.fahimshahriarv1.mtom.domain.usecases.SaveTokenUseCase
@@ -116,17 +119,23 @@ class SignUpViewModel @Inject constructor(
             optionsBuilder.setForceResendingToken(resendToken!!)
         }
 
+        logApiRequest(
+            "verifyPhoneNumber",
+            "phone=${countryCode.value + mobileNumber.value}, isResend=$isResend"
+        )
         PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
     }
 
     private val phoneAuthCallbacks =
         object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                logApiResponse("verifyPhoneNumber", "auto-retrieved, provider=${credential.provider}")
                 loaderState.value = false
                 showToast("Verification Success")
             }
 
             override fun onVerificationFailed(exception: FirebaseException) {
+                logApiError("verifyPhoneNumber", exception)
                 loaderState.value = false
                 hasSentOtp = false
                 showToast("Unable to verify: ${exception.message}")
@@ -134,6 +143,7 @@ class SignUpViewModel @Inject constructor(
             }
 
             override fun onCodeAutoRetrievalTimeOut(verificationId: String) {
+                logApiResponse("verifyPhoneNumber", "auto-retrieval timed out, enter OTP manually")
                 super.onCodeAutoRetrievalTimeOut(verificationId)
             }
 
@@ -142,6 +152,7 @@ class SignUpViewModel @Inject constructor(
                 token: ForceResendingToken
             ) {
                 super.onCodeSent(verificationId, token)
+                logApiResponse("verifyPhoneNumber", "code sent, verificationId=$verificationId")
                 loaderState.value = false
                 Log.d("OTP sent", "$verificationId $token")
                 verificationID = verificationId
@@ -174,10 +185,13 @@ class SignUpViewModel @Inject constructor(
         }
         val credential = PhoneAuthProvider.getCredential(verificationID, otp.value)
         loaderState.value = true
+        logApiRequest("signInWithCredential", "otpLength=${otp.value.length}")
         firebaseAuth.signInWithCredential(credential).addOnSuccessListener {
+            logApiResponse("signInWithCredential", "uid=${it.user?.uid}")
             loaderState.value = false
             onOtpVerified()
         }.addOnFailureListener {
+            logApiError("signInWithCredential", it)
             loaderState.value = false
             showToast("Wrong OTP, please try again")
             it.printStackTrace()
