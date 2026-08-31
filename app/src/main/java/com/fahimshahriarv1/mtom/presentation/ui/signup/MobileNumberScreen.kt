@@ -68,6 +68,7 @@ fun MobileNumberScreen(
     countryCode: State<String> = mutableStateOf("+88"),
     isError: State<Boolean> = mutableStateOf(false),
     isLoading: Boolean = false,
+    title: String = stringResource(id = R.string.enter_mobile_number),
     mobileNumberChanged: (String) -> Unit = {},
     onCountryCodeClicked: (String) -> Unit = {},
     onSendOtpClicked: () -> Unit = {},
@@ -108,7 +109,7 @@ fun MobileNumberScreen(
                     Spacer(modifier = Modifier.height(40.dp))
 
                     Text(
-                        text = stringResource(id = R.string.enter_mobile_number),
+                        text = title,
                         textAlign = TextAlign.Center,
                         fontSize = 24.sp,
                         color = colorResource(id = R.color.black),
